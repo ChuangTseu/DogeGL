@@ -2,7 +2,9 @@ project(DogeGL)
 cmake_minimum_required(VERSION 2.8)
 aux_source_directory(. SRC_LIST)
 
-set(CMAKE_BUILD_TYPE Debug)
+if (NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE Debug)
+endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake_modules/")
 
@@ -27,7 +29,8 @@ IF(WIN32)
 ENDIF(WIN32)
 
 
-file(GLOB SHADER_FILES bin_environment/*.frag bin_environment/*.vert bin_environment/*.glsl)
+file(GLOB SHADER_FILES bin_environment/*.frag bin_environment/*.vert bin_environment/*.glsl
+                       bin_environment/*.tesc bin_environment/*.tese)
 
 install(DIRECTORY bin_environment/ DESTINATION shaders
           FILES_MATCHING PATTERN "*.frag")

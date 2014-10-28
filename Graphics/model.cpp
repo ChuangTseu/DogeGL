@@ -14,73 +14,70 @@ Model::Model()
 {
 }
 
-bool Model::loadBasicType(BasicType type) {
-    m_vertices.clear();
-    m_indices.clear();
+//bool Model::loadBasicType(BasicType type) {
+//    m_vertices.clear();
+//    m_indices.clear();
 
-    if (type == BasicType::CUBE) {
-        m_vertices = {{{-1.0f, -1.0f, -1.0f}, {-1.0f, -1.0f, -1.0f}},
-                      {{1.0f, -1.0f, -1.0f},  {1.0f, -1.0f, -1.0f}},
-                      {{1.0f, 1.0f, -1.0f},   {1.0f, 1.0f, -1.0f}},     // Face 1
-                      {{-1.0f, 1.0f, -1.0f},  {-1.0f, 1.0f, -1.0f}},
-                      {{1.0f, -1.0f, 1.0f},   {1.0f, -1.0f, 1.0f}},
-                      {{1.0f, 1.0f, 1.0f},    {1.0f, 1.0f, 1.0f}},
-                      {{-1.0f, -1.0f, 1.0f},  {-1.0f, -1.0f, 1.0f}},
-                      {{-1.0f, 1.0f, 1.0f},   {-1.0f, 1.0f, 1.0f}} };
+//    if (type == BasicType::CUBE) {
+//        m_vertices = {{{-1.0f, -1.0f, -1.0f}, {-1.0f, -1.0f, -1.0f}},
+//                      {{1.0f, -1.0f, -1.0f},  {1.0f, -1.0f, -1.0f}},
+//                      {{1.0f, 1.0f, -1.0f},   {1.0f, 1.0f, -1.0f}},     // Face 1
+//                      {{-1.0f, 1.0f, -1.0f},  {-1.0f, 1.0f, -1.0f}},
+//                      {{1.0f, -1.0f, 1.0f},   {1.0f, -1.0f, 1.0f}},
+//                      {{1.0f, 1.0f, 1.0f},    {1.0f, 1.0f, 1.0f}},
+//                      {{-1.0f, -1.0f, 1.0f},  {-1.0f, -1.0f, 1.0f}},
+//                      {{-1.0f, 1.0f, 1.0f},   {-1.0f, 1.0f, 1.0f}} };
 
-        m_indices = {0,   1,   2,
-                    0,   3,   2,
-                    4,   1,   2,
-                    4,   5,   2,
-                    6,   4,   1,
-                    6,   0,   1,
-                    6,   4,   5,
-                    6,   7,   5,
-                    0,   6,   7,
-                    0,   3,   7,
-                    7,   5,   2,
-                    7,   3,   2};
-    }
-    else {
-        std::cerr << "BasicType (" << static_cast<int>(type) << ") not yet implemented" << '\n';
-        return false;
-    }
+//        m_indices = {0,   1,   2,
+//                    0,   3,   2,
+//                    4,   1,   2,
+//                    4,   5,   2,
+//                    6,   4,   1,
+//                    6,   0,   1,
+//                    6,   4,   5,
+//                    6,   7,   5,
+//                    0,   6,   7,
+//                    0,   3,   7,
+//                    7,   5,   2,
+//                    7,   3,   2};
+//    }
+//    else {
+//        std::cerr << "BasicType (" << static_cast<int>(type) << ") not yet implemented" << '\n';
+//        return false;
+//    }
 
-    m_vbo.submitData(m_vertices.data(), m_vertices.size());
-    m_ibo.submitData(m_indices.data(), m_indices.size());
+//    m_vbo.submitData(m_vertices.data(), m_vertices.size());
+//    m_ibo.submitData(m_indices.data(), m_indices.size());
 
 
-    glGenVertexArrays(1, &m_vao);
-    glBindVertexArray(m_vao);
+//    glGenVertexArrays(1, &m_vao);
+//    glBindVertexArray(m_vao);
 
-    m_vbo.bind();
-    glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), 0);
-    glEnableVertexAttribArray(0);
+//    m_vbo.bind();
+//    glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), 0);
+//    glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 3, GL_FLOAT, false, sizeof(Vertex), BUFFER_OFFSET(sizeof(vec3)));
-    glEnableVertexAttribArray(1);
+//    glVertexAttribPointer(1, 3, GL_FLOAT, false, sizeof(Vertex), BUFFER_OFFSET(sizeof(vec3)));
+//    glEnableVertexAttribArray(1);
 
-    m_ibo.bind();
+//    m_ibo.bind();
 
-    glBindVertexArray(0);
+//    glBindVertexArray(0);
 
-    VBO::unbind();
-    IBO::unbind();
+//    VBO::unbind();
+//    IBO::unbind();
 
-    return true;
-}
+//    return true;
+//}
 
-bool Model::load()
+bool Model::loadFromFile(const std::string& filename)
 {
-    std::string filename = "cube.obj";
-
     Assimp::Importer importer;
 
     // Component to be removed when importing file
     importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS,
                                 aiComponent_TANGENTS_AND_BITANGENTS
                                 | aiComponent_COLORS
-                                | aiComponent_TEXCOORDS
                                 | aiComponent_BONEWEIGHTS
                                 | aiComponent_ANIMATIONS
                                 | aiComponent_TEXTURES
@@ -96,6 +93,7 @@ bool Model::load()
         | aiProcess_JoinIdenticalVertices
         | aiProcess_RemoveComponent
         | aiProcess_GenNormals
+        //| aiProcess_GenUVCoords
         //| aiProcess_MakeLeftHanded
     );
     // If the import failed, report it
@@ -105,7 +103,6 @@ bool Model::load()
         return false;
     }
     // Now we can access the file's contents.
-    //DoTheSceneProcessing( scene);
 //    std::cerr << "Model contains " << scene->mNumMeshes << " meshes" << '\n';
 
     const aiMesh* mesh = scene->mMeshes[0];
@@ -115,14 +112,13 @@ bool Model::load()
 //    std::cerr << "Mesh HasPositions ? " << mesh->HasPositions() << '\n';
 //    std::cerr << "Mesh HasTangentsAndBitangents ? " << mesh->HasTangentsAndBitangents() << '\n';
 //    std::cerr << "Mesh HasBones ? " << mesh->HasBones() << '\n';
-//    //std::cerr << "Mesh HasTextureCoords ? " << mesh->HasTextureCoords() << '\n';
-//    //std::cerr << "Mesh HasVertexColors ? " << mesh->HasVertexColors() << '\n';
+//    std::cerr << "Mesh HasTextureCoords ? " << mesh->HasTextureCoords(0) << '\n';
+////    std::cerr << "mesh->mTextureCoords[0] != NULL ? " << (mesh->mTextureCoords[0] != NULL) << '\n';
 //    std::cerr << "Mesh GetNumUVChannels ? " << mesh->GetNumUVChannels() << '\n';
 //    std::cerr << "Mesh GetNumColorChannels ? " << mesh->GetNumColorChannels() << '\n';
 //    std::cerr << "Mesh mNumFaces ? " << mesh->mNumFaces << '\n';
 //    std::cerr << "Mesh mNumVertices ? " << mesh->mNumVertices << '\n';
 //    std::cerr << "Mesh mPrimitiveTypes ? " << mesh->mPrimitiveTypes << " and should be " << aiPrimitiveType_TRIANGLE << '\n';
-
     m_vertices.clear();
     m_indices.clear();
 
@@ -142,6 +138,9 @@ bool Model::load()
         const aiVector3D& vertex = mesh->mVertices[idVertex];
         const aiVector3D& normal = mesh->mNormals[idVertex];
 
+        const aiVector3D& texcoord = (mesh->HasTextureCoords(0) ?
+                                          mesh->mTextureCoords[0][idVertex] : aiVector3D{0.f, 0.f, 0.f});
+
         Vertex v;
         v.position.x = vertex.x;
         v.position.y = vertex.y;
@@ -150,6 +149,9 @@ bool Model::load()
         v.normal.x = normal.x;
         v.normal.y = normal.y;
         v.normal.z = normal.z;
+
+        v.texcoord.x = texcoord.x;
+        v.texcoord.y = texcoord.y;
 
         m_vertices.push_back(v);
     }
@@ -168,6 +170,9 @@ bool Model::load()
     glVertexAttribPointer(1, 3, GL_FLOAT, false, sizeof(Vertex), BUFFER_OFFSET(sizeof(vec3)));
     glEnableVertexAttribArray(1);
 
+    glVertexAttribPointer(2, 2, GL_FLOAT, false, sizeof(Vertex), BUFFER_OFFSET(2*sizeof(vec3)));
+    glEnableVertexAttribArray(2);
+
     m_ibo.bind();
 
     glBindVertexArray(0);
@@ -183,7 +188,12 @@ void Model::draw() {
 
     glBindVertexArray(m_vao);
 
-    glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, nullptr);
+    glPatchParameteri(GL_PATCH_VERTICES, 3);
+
+    glDrawElements(GL_PATCHES, m_indices.size(), GL_UNSIGNED_INT, nullptr);
+//    glDrawElements(GL_LINE_STRIP, m_indices.size(), GL_UNSIGNED_INT, nullptr);
+
+
 
     glBindVertexArray(0);
 }

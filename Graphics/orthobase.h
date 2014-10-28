@@ -27,12 +27,14 @@ public:
         vec3 yaxis{0, 1, 0};
         vec3 zaxis{0, 0, 1};
 
+        vec2 uvcoord{0, 0};
+
         float axisLength = 1000.f;
 
         m_vertices = {
-                {origin, xaxis}, {xaxis*axisLength, xaxis},
-                {origin, yaxis}, {yaxis*axisLength, yaxis},
-                {origin, zaxis}, {zaxis*axisLength, zaxis}
+                {origin, xaxis, uvcoord}, {xaxis*axisLength, xaxis, uvcoord},
+                {origin, yaxis, uvcoord}, {yaxis*axisLength, yaxis, uvcoord},
+                {origin, zaxis, uvcoord}, {zaxis*axisLength, zaxis, uvcoord}
                      };
 
         m_vbo.submitData(m_vertices.data(), m_vertices.size());

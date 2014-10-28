@@ -3,14 +3,9 @@
 
 #include "MathsTools/mat4.h"
 #include "MathsTools/vec3.h"
+#include "MathsTools/maths.h"
 
 #include "GL/glew.h"
-
-#include <math.h>
-
-#define PI		3.14159265358979323846f
-#define PI_2		1.57079632679489661923f
-#define PI_4		0.78539816339744830962f
 
 class Camera
 {
@@ -26,13 +21,9 @@ public:
 
     void setProperties(vec3 position, vec3 lookAt, vec3 up);
 
-    void setProjection(float fovy, float aspect, float near, float far);
-
-    void setWorldToView();
-
     void lookAt(const vec3& eye, const vec3& center, const vec3& up);
 
-    void sendToShader(GLuint programId) const;
+    const mat4& getView();
 };
 
 #endif // CAMERA_H

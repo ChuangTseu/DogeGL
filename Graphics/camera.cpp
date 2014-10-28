@@ -4,33 +4,10 @@ Camera::Camera()
 {
 }
 
-
 void Camera::setProperties(vec3 position, vec3 lookAt, vec3 up) {
     m_position = position;
     m_lookAt = lookAt;
     m_up = up;
-}
-
-void Camera::setProjection(float fovy, float aspect, float near, float far) {
-    fovy = fovy * (PI/180.f) ; // degree to radian
-
-    float f = 1.f/tanf(fovy/2.f);
-
-    m_projection = {-f / aspect, 0.f,    0.f,                                        0.f,
-                   0.f,         f,      0.f,                                        0.f,
-                   0.f,         0.f,    (far + near) / (far - near),               1.f,
-                   0.f,         0.f,    (-2*far*near / (far - near)),                0.f};
-}
-
-void Camera::setWorldToView() {
-//    vec3 left{1, 0, 0};
-//    vec3 up{0, 1, 0};
-//    vec3 forward{0, 0, 1};
-
-//    vec3 position{0.2f, 1.f, 3.f};
-
-//    lookAt(position, position + forward, up);
-
 }
 
 void Camera::lookAt(const vec3& eye, const vec3& center, const vec3& up) {
@@ -77,19 +54,6 @@ void Camera::lookAt(const vec3& eye, const vec3& center, const vec3& up) {
         //std::cerr << "Pk: " << Pk << '\n';
 }
 
-void Camera::sendToShader(GLuint programId) const { 
-//    mat4 m1;
-//    m1.identity();
-//    mat4 m2;
-//    m2.identity();
-    //m2 = m_projection * m_worldToView;
-
-
-//    glUniformMatrix4fv(glGetUniformLocation(programId, "modelview"), 1, GL_FALSE, m1.data());
-//    glUniformMatrix4fv(glGetUniformLocation(programId, "projection"), 1, GL_FALSE, m2.data());
-
-
-    glUniformMatrix4fv(glGetUniformLocation(programId, "modelview"), 1, GL_FALSE, m_worldToView.data());
-    glUniformMatrix4fv(glGetUniformLocation(programId, "projection"), 1, GL_FALSE, m_projection.data());
-
+const mat4& Camera::getView() {
+    return m_worldToView;
 }

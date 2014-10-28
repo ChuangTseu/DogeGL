@@ -15,9 +15,9 @@ bool Scene::initWindow() {
 
     // OpenGL version
 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     //SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
 
@@ -62,7 +62,7 @@ bool Scene::initGL()
     // On initialise GLEW
 
     /*Potentiel fix pour le crash quand SDL contexte > OpenGL 3.1 + GLEW*/
-    //glewExperimental = GL_TRUE;
+    glewExperimental = GL_TRUE;
 
     GLenum GLEWinitialization( glewInit() );
 
@@ -98,36 +98,6 @@ bool Scene::initGL()
     return true;
 }
 
-bool checkEndEvent() {
-    SDL_Event events;
-    while(SDL_PollEvent(&events))
-    {
-        // Switch sur le type d'�v�nement
-
-        switch(events.type)
-        {
-            // Cas d'une touche enfonc�e
-
-            case SDL_KEYDOWN:
-                if(events.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-                    return true;
-            break;
-
-            // Cas de la fermeture de la fen�tre
-
-            case SDL_WINDOWEVENT:
-                if(events.window.event == SDL_WINDOWEVENT_CLOSE)
-                    return true;
-            break;
-
-            default:
-            break;
-        }
-    }
-
-    return false;
-}
-
 #include <chrono>
 #include "input.h"
 #include "orthobase.h"
@@ -138,6 +108,8 @@ void Scene::mainLoop()
 
     s.addVertexShader("simple.vert");
     s.addFragmentShader("simple.frag");
+    s.addTessControlShader("simple_tesc.glsl");
+    s.addTessEvaluationShader("simple_tese.glsl");
     s.link();
 
     Shader lineShader;
@@ -150,8 +122,7 @@ void Scene::mainLoop()
 
     camera.setProperties({0.f, 0.f, -1.f}, {0.f, 0.f, 1.f}, {0.f, 1.f, 0.f});
 
-    camera.setProjection(70, (float) m_windowWidth/m_windowHeight, 0.1f, 100.f);
-    camera.setWorldToView();
+    mat4 projection = mat4::Projection(70, (float) m_windowWidth/m_windowHeight, 0.1f, 100.f);
 
     vec3 up{0, 1, 0};    
     vec3 position{5.f, 5.f, 5.f};
@@ -162,19 +133,15 @@ void Scene::mainLoop()
     OrthoBase base;
     Model cube;
 
-    //cube.loadBasicType(Model::BasicType::CUBE);
-
-    cube.load();
-
-    float delta = 0.01f;
+    cube.loadFromFile("cube.obj");
 
     float theta = 0;
-    float x;
-    float z;
-    float A = 5.f;
 
     // Pure FPS Mode
     SDL_SetRelativeMouseMode(SDL_TRUE);
+
+    uint64_t counter = 0;
+    uint64_t refreshCounterEvery = 10;
 
 
     while(!input.updateEvents() == Input::QUIT_EVENT)
@@ -183,11 +150,13 @@ void Scene::mainLoop()
 
         //Bed
 
-        theta += 0.01f;
+        theta += 0.1f;
         //A += 0.03;
 
-        x = cosf(theta);
-        z = -sinf(theta);
+//        x = cosf(theta);
+//        z = -sinf(theta);
+
+        //position = {A*x, 5.f*sin(theta*3.f), A*z};
 
         // WARNING: Following content rated mature, keep children far from this terrible stuff
         int mouse_x_rel = input.getXRel();
@@ -202,34 +171,35 @@ void Scene::mainLoop()
         forward.normalize();
 
         if (input.getKey(SDL_SCANCODE_W)) {
-            position += forward*0.1f;
-        }
+            position += forward*0.1f;        }
         if (input.getKey(SDL_SCANCODE_S)) {
-            position -= forward*0.1f;
-        }
+            position -= forward*0.1f;        }
         if (input.getKey(SDL_SCANCODE_A)) {
-            position -= kright*0.1f;
-        }
+            position -= kright*0.1f;        }
         if (input.getKey(SDL_SCANCODE_D)) {
-            position += kright*0.1f;
-        }
+            position += kright*0.1f;        }
+        if (input.getKey(SDL_SCANCODE_LSHIFT)) {
+            position += up*0.1f;        }
+        if (input.getKey(SDL_SCANCODE_LCTRL)) {
+            position -= up*0.1f;        }
 
-        //std::cerr << "xrel: " << mouse_x_rel << " yrel: " << mouse_y_rel << '\n';
-
-        //position = {A*x, 5.f*sin(theta*3.f), A*z};
-
-        //camera.lookAt(position, {0, 0, 0}, up);
         camera.lookAt(position, position + forward, up);
 
 
         //EndBed
 
-        //glClearColor(1.f, 1.f, 1.f, 0); // WHITE
-        glClearColor(0.f, 0.f, 0.f, 0); // BLACK
+        glClearColor(1.f, 1.f, 1.f, 0); // WHITE
+        //glClearColor(0.f, 0.f, 0.f, 0); // BLACK
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        mat4 cubeTransformation = mat4::Identity();
+
+//        cubeTransformation.translate(0.f, 0.f, theta / 20.f);
+        cubeTransformation.rotate(normalize({0.f, 1.f, 0.f}), theta);
+//        cubeTransformation.scale(1 + theta / 20, 1, 1);
+
         s.use();
-        camera.sendToShader(s.getProgramId());
+        s.sendTransformations(projection, camera.getView(), cubeTransformation);
 
         cube.draw();
 
@@ -237,7 +207,7 @@ void Scene::mainLoop()
 
 
         lineShader.use();
-        camera.sendToShader(lineShader.getProgramId());
+        lineShader.sendTransformations(projection, camera.getView(), mat4::Identity());
 
         base.draw();
 
@@ -250,7 +220,15 @@ void Scene::mainLoop()
         uint64_t time_in_pc = SDL_GetPerformanceCounter() - start_time;
         double time_in_micros = time_in_pc / (SDL_GetPerformanceFrequency() / 1000000.0);
 
-        //std::cerr << "Execution time: " << time_in_pc << "pc  " << time_in_micros << "micros\n";
+        char title_buffer[512];
 
+        if (counter == refreshCounterEvery) {
+            sprintf(title_buffer, "%s (%f us, ~%f FPS)", m_windowTitle.c_str(), time_in_micros, 1000000/time_in_micros);
+            SDL_SetWindowTitle(m_window, title_buffer);
+
+            counter = 0;
+        }
+
+        ++counter;
     }
 }

@@ -182,7 +182,7 @@ bool Input::getMouseButton(const Uint8 button) const
  */
 bool Input::mouseMouve() const
 {
-    return not(m_xRel == 0 && m_yRel == 0);
+    return !(m_xRel == 0 && m_yRel == 0);
 }
 
 // Getters concernant la position du curseur

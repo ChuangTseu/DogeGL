@@ -6,6 +6,8 @@
 
 #include <GL/glew.h>
 
+#include "MathsTools/mat4.h"
+
 
 
 class Shader {
@@ -24,6 +26,8 @@ public:
 
     bool addVertexShader(std::string filename);
     bool addFragmentShader(std::string filename);
+    bool addTessControlShader(std::string filename);
+    bool addTessEvaluationShader(std::string filename);
 
     bool link();
 
@@ -32,6 +36,8 @@ public:
     GLuint getProgramId() const {
         return m_program;
     }
+
+    void sendTransformations(const mat4 &projection, const mat4 &view, const mat4 &model);
 
 private:
     bool addShader(std::string filename, GLenum type);

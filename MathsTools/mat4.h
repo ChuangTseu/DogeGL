@@ -3,8 +3,13 @@
 
 #include <algorithm>
 #include <iostream>
+#include <cassert>
 
 #include "vec4.h"
+
+#include "vec3.h"
+
+#include "maths.h"
 
 struct mat4
 {
@@ -57,6 +62,24 @@ public:
         }
     }
 
+    static mat4 Identity() {
+        mat4 ret;
+        ret.identity();
+
+        return ret;
+    }
+
+    static mat4 Projection(float fovy, float aspect, float near, float far) {
+        fovy = fovy * (PI/180.f) ; // degree to radian
+
+        float f = 1.f/tanf(fovy/2.f);
+
+        return        {-f / aspect, 0.f,    0.f,                                        0.f,
+                       0.f,         f,      0.f,                                        0.f,
+                       0.f,         0.f,    (far + near) / (far - near),               1.f,
+                       0.f,         0.f,    (-2*far*near / (far - near)),                0.f};
+    }
+
     mat4& operator+=(const mat4& other) {
         std::transform(pBegin(), pEnd(), other.pBegin(), pBegin(), std::plus<float>());
 
@@ -103,6 +126,47 @@ public:
                 std::swap(m_data[i][j], m_data[j][i]);
             }
         }
+    }
+
+    mat4& rotate(const vec3& axis, float angle) {
+        assert(norm(axis) == 1.f);
+
+        angle = angle * (PI/180.f); // degree to radian
+        float c = cosf(angle);
+        float s = sinf(angle);
+        float x = axis.x;
+        float y = axis.y;
+        float z = axis.z;
+
+        mat4 r{x*x*(1 - c) + c,     y*x*(1 - c) + z*s,  x*z*(1 - c) - y*s,  0.f,
+               x*y*(1 - c) - z*s,   y*y*(1 - c) + c,    y*z*(1 - c) + x*s,  0.f,
+               x*z*(1 - c) + y*s,   y*z*(1 - c) - x*s,  z*z*(1 - c) + c,    0.f,
+               0.f,                 0.f,                0.f,                1.f
+              };
+
+        return (*this) *= r;
+    }
+
+    mat4& translate(float x, float y, float z) {
+
+        mat4 r{1.f,                 0.f,                0.f,                0.f,
+               0.f,                 1.f,                0.f,                0.f,
+               0.f,                 0.f,                1.f,                0.f,
+               x,                 y,                z,                1.f
+              };
+
+        return (*this) *= r;
+    }
+
+    mat4& scale(float x, float y, float z) {
+
+        mat4 r{x,                 0.f,                0.f,                0.f,
+               0.f,                y,                0.f,                0.f,
+               0.f,                 0.f,                z,                0.f,
+               0.f,                 0.f,                0.f,                1.f
+              };
+
+        return (*this) *= r;
     }
 
     mat4& operator/=(const mat4& other) {

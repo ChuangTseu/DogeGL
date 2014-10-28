@@ -1,18 +1,25 @@
-#version 330
+#version 400 core
 
 layout(location = 0) in vec3 vertex;
 layout(location = 1) in vec3 normal;
+layout(location = 2) in vec2 texcoord;
 
-out vec3 color;
+out Data {
+    vec3 normal;
+    vec2 texcoord;
+} outData;
 
-// Uniform
+//out vec3 tcNormal;
+//out vec2 tcTexcoord;
 
-uniform mat4 projection;
-uniform mat4 modelview;
 
 void main( void )
 {
-    gl_Position = projection * modelview * vec4(vertex, 1);
+    gl_Position =  vec4(vertex, 1);
 
-    color = normalize(normal);
+    outData.normal = normalize(normal);
+    outData.texcoord = texcoord;
+
+//    tcNormal = normalize(normal);
+//    tcTexcoord = texcoord;
 }

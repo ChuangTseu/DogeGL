@@ -1,6 +1,7 @@
 #ifndef GL_H
 #define GL_H
 
+#include <cstdint>
 #include <GL/glew.h>
 
 #define BUFFER_OFFSET(p) ((uint8_t*)0 + p)

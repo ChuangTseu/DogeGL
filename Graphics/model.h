@@ -32,9 +32,9 @@ public:
 public:
     Model();
 
-    bool loadBasicType(BasicType type);
+//    bool loadBasicType(BasicType type);
 
-    bool load(); // Later, loadFrom
+    bool loadFromFile(const std::string& filename); // Later, loadFrom
 
     void draw();
 };

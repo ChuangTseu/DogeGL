@@ -10,6 +10,13 @@ bool Shader::addFragmentShader(std::string filename) {
     return addShader(filename, GL_FRAGMENT_SHADER);
 }
 
+bool Shader::addTessControlShader(std::string filename) {
+    return addShader(filename, GL_TESS_CONTROL_SHADER);
+}
+
+bool Shader::addTessEvaluationShader(std::string filename) {
+    return addShader(filename, GL_TESS_EVALUATION_SHADER);
+}
 
 bool Shader::addShader(std::string filename, GLenum type) {
     GLint length;
@@ -43,15 +50,6 @@ bool Shader::addShader(std::string filename, GLenum type) {
 
         return false;
     }
-
-//    switch(type) {
-//    case GL_VERTEX_SHADER:
-//        m_vertexShader = shaderId;
-//        break;
-//    case GL_FRAGMENT_SHADER:
-//        m_fragmentShader = shaderId;
-//        break;
-//    }
 
     if (type == GL_VERTEX_SHADER) {
         // Using layout(location = x) instead
@@ -92,3 +90,12 @@ void Shader::use() {
     glUseProgram(m_program);
 }
 
+void Shader::sendTransformations(const mat4& projection, const mat4& view, const mat4& model) {
+    mat4 MVP = projection * view * model;
+
+    glUniformMatrix4fv(glGetUniformLocation(m_program, "MVP"), 1, GL_FALSE, MVP.data());
+
+//    glUniformMatrix4fv(glGetUniformLocation(m_program, "projection"), 1, GL_FALSE, projection.data());
+//    glUniformMatrix4fv(glGetUniformLocation(m_program, "modelview"), 1, GL_FALSE, view.data());
+//    glUniformMatrix4fv(glGetUniformLocation(m_program, "model"), 1, GL_FALSE, model.data());
+}

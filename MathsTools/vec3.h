@@ -80,6 +80,10 @@ inline vec3 normalize(vec3 v) {
     return v;
 }
 
+inline float norm(const vec3& v) {
+    return v.norm();
+}
+
 inline float dot(const vec3& lhs, const vec3& rhs) {
     return lhs.x*rhs.x + lhs.y*rhs.y + lhs.z*rhs.z;
 }
