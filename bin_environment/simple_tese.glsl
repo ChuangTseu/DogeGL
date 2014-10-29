@@ -10,6 +10,7 @@ in Data {
 out Data {
     vec3 normal;
     vec2 texcoord;
+    vec3 position;
 } outData;
 
 //in vec3 teNormal[];
@@ -41,6 +42,7 @@ void main()
         gl_Position.xyz = 3*normalize(gl_Position.xyz);
 
         outData.normal = gl_Position.xyz;
+        outData.position = gl_Position.xyz;
 
         gl_Position = MVP * gl_Position;
 

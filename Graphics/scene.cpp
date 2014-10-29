@@ -101,6 +101,7 @@ bool Scene::initGL()
 #include <chrono>
 #include "input.h"
 #include "orthobase.h"
+#include "texture.h"
 
 void Scene::mainLoop()
 {
@@ -134,6 +135,9 @@ void Scene::mainLoop()
     Model cube;
 
     cube.loadFromFile("cube.obj");
+
+    Texture texture;
+    texture.loadFromFile("doge_512.jpg");
 
     float theta = 0;
 
@@ -186,6 +190,18 @@ void Scene::mainLoop()
         camera.lookAt(position, position + forward, up);
 
 
+        if (input.getKey(SDL_SCANCODE_R)) {
+            // Reload Shaders
+            s.renew();
+
+            s.addVertexShader("simple.vert");
+            s.addFragmentShader("simple.frag");
+            s.addTessControlShader("simple_tesc.glsl");
+            s.addTessEvaluationShader("simple_tese.glsl");
+            s.link();
+        }
+
+
         //EndBed
 
         glClearColor(1.f, 1.f, 1.f, 0); // WHITE
@@ -200,6 +216,8 @@ void Scene::mainLoop()
 
         s.use();
         s.sendTransformations(projection, camera.getView(), cubeTransformation);
+
+        texture.bindToTarget(GL_TEXTURE0);
 
         cube.draw();
 

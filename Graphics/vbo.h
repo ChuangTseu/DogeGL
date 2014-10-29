@@ -1,7 +1,7 @@
 #ifndef VBO_H
 #define VBO_H
 
-#include <GL/glew.h>
+#include "GL.h"
 
 #include "vertex.h"
 

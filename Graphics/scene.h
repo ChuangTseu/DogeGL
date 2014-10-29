@@ -5,7 +5,7 @@
 #include <SDL.h>
 #include <iostream>
 #include <string>
-#include <GL/glew.h>
+#include "GL.h"
 
 #include "shader.h"
 #include "camera.h"

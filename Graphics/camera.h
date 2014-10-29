@@ -5,7 +5,7 @@
 #include "MathsTools/vec3.h"
 #include "MathsTools/maths.h"
 
-#include "GL/glew.h"
+#include "GL.h"
 
 class Camera
 {

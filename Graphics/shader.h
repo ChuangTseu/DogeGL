@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <iostream>
 
-#include <GL/glew.h>
+#include "GL.h"
 
 #include "MathsTools/mat4.h"
 
@@ -38,6 +38,11 @@ public:
     }
 
     void sendTransformations(const mat4 &projection, const mat4 &view, const mat4 &model);
+
+    void renew() {
+        glDeleteProgram(m_program);
+        m_program = glCreateProgram();
+    }
 
 private:
     bool addShader(std::string filename, GLenum type);

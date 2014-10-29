@@ -24,6 +24,8 @@ find_package(GLEW REQUIRED) # GLEW
 
 find_package(assimp REQUIRED) # assimp
 
+find_package(DevIL REQUIRED) # DevIL
+
 IF(WIN32)
     add_definitions(-DWIN32)
 ENDIF(WIN32)
@@ -39,7 +41,7 @@ message("SHADER_FILES ${SHADER_FILES}")
 
 add_executable(${PROJECT_NAME} ${SHADER_FILES} ${SRC_LIST})
 
-include_directories(. ${SDL2_INCLUDE_DIR} ${GLEW_INCLUDE_DIR} ${ASSIMP_INCLUDE_DIR})
+include_directories(. ${SDL2_INCLUDE_DIR} ${GLEW_INCLUDE_DIR} ${ASSIMP_INCLUDE_DIR} ${DEVIL_INCLUDE_DIR})
 
 add_subdirectory(MathsTools)
 add_subdirectory(Graphics)
@@ -48,5 +50,5 @@ target_link_libraries(${PROJECT_NAME} MATHSTOOLS GRAPHICS)
 
 message(${GLEW_LIBRARY})
 
-target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARY} ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} ${ASSIMP_LIBRARY})
+target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARY} ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} ${ASSIMP_LIBRARY} ${DEVIL_LIBRARY})
 

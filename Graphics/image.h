@@ -1,0 +1,35 @@
+#ifndef IMAGE_H
+#define IMAGE_H
+
+#include <string>
+
+#include <memory>
+
+#include "IL/il.h"
+
+class Image
+{
+    unsigned int m_width;
+    unsigned int m_height;
+
+    unsigned char* m_data;
+
+public:
+    Image();
+
+    bool loadFromFile(std::string filename);
+
+    unsigned int getWidth() const {
+        return m_width;
+    }
+
+    unsigned int getHeight() const {
+        return m_height;
+    }
+
+    const unsigned char* getData() const {
+        return m_data;
+    }
+};
+
+#endif // IMAGE_H

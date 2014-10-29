@@ -1,7 +1,7 @@
 #ifndef IBO_H
 #define IBO_H
 
-#include <GL/glew.h>
+#include "GL.h"
 
 class IBO
 {
