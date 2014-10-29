@@ -22,6 +22,7 @@ out Data {
 // Uniform
 
 uniform mat4 MVP;
+uniform mat4 world;
 
 void main()
 {
@@ -39,10 +40,10 @@ void main()
 //            gl_Position.xyz += normalize(gl_Position.xyz);
 //        }
 
-        gl_Position.xyz = 3*normalize(gl_Position.xyz);
+//        gl_Position.xyz = 3*normalize(gl_Position.xyz);
 
-        outData.normal = gl_Position.xyz;
-        outData.position = gl_Position.xyz;
+        outData.normal = normalize((world * vec4(normalize(outData.normal), 0)).xyz);
+        outData.position = (world * vec4(gl_Position.xyz, 1)).xyz;
 
         gl_Position = MVP * gl_Position;
 

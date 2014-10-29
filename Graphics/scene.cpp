@@ -103,6 +103,11 @@ bool Scene::initGL()
 #include "orthobase.h"
 #include "texture.h"
 
+struct DirLight {
+    vec3 m_direction;
+    vec3 m_color;
+};
+
 void Scene::mainLoop()
 {
     Shader s;
@@ -123,7 +128,7 @@ void Scene::mainLoop()
 
     camera.setProperties({0.f, 0.f, -1.f}, {0.f, 0.f, 1.f}, {0.f, 1.f, 0.f});
 
-    mat4 projection = mat4::Projection(70, (float) m_windowWidth/m_windowHeight, 0.1f, 100.f);
+    mat4 projection = mat4::Projection(70, (float) m_windowWidth/m_windowHeight, 0.1f, 10000.f);
 
     vec3 up{0, 1, 0};    
     vec3 position{5.f, 5.f, 5.f};
@@ -204,8 +209,8 @@ void Scene::mainLoop()
 
         //EndBed
 
-        glClearColor(1.f, 1.f, 1.f, 0); // WHITE
-        //glClearColor(0.f, 0.f, 0.f, 0); // BLACK
+//        glClearColor(1.f, 1.f, 1.f, 0); // WHITE
+        glClearColor(0.f, 0.f, 0.f, 0); // BLACK
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         mat4 cubeTransformation = mat4::Identity();
@@ -214,10 +219,28 @@ void Scene::mainLoop()
         cubeTransformation.rotate(normalize({0.f, 1.f, 0.f}), theta);
 //        cubeTransformation.scale(1 + theta / 20, 1, 1);
 
-        s.use();
-        s.sendTransformations(projection, camera.getView(), cubeTransformation);
+        s.use();        
 
         texture.bindToTarget(GL_TEXTURE0);
+
+        DirLight dirLight{vec3{-1, 0, 0}, vec3{1, 1, 1}};
+
+        glUniform3fv(glGetUniformLocation(s.getProgramId(), "dirLight.direction"), 1, dirLight.m_direction.data());
+        glUniform3fv(glGetUniformLocation(s.getProgramId(), "dirLight.color"), 1, dirLight.m_color.data());
+
+        glUniform3fv(glGetUniformLocation(s.getProgramId(), "eyePosition"), 1, position.data());
+
+        s.sendTransformations(projection, camera.getView(), cubeTransformation);
+
+        cube.draw();
+
+        cubeTransformation = mat4::Identity();
+
+        cubeTransformation.translate(-4.f, 0.f, 0.f);
+        cubeTransformation.scale(0.1, 10, 10);
+        cubeTransformation.rotate({1, 0, 0}, 90);
+
+        s.sendTransformations(projection, camera.getView(), cubeTransformation);
 
         cube.draw();
 

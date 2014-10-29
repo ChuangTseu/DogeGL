@@ -22,6 +22,14 @@ struct vec4
 
 
 public:
+    float* data() {
+        return (float*) m_data;
+    }
+
+    const float* data() const {
+        return (float*)m_data;
+    }
+
     vec4& operator+=(const vec4& other) {
         std::transform(m_data, m_data + N, other.m_data, m_data, std::plus<float>());
 

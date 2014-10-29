@@ -20,6 +20,14 @@ struct vec3
 
 
 public:
+    float* data() {
+        return (float*) m_data;
+    }
+
+    const float* data() const {
+        return (float*)m_data;
+    }
+
     vec3& operator+=(const vec3& other) {
         std::transform(m_data, m_data + 3, other.m_data, m_data, std::plus<float>());
 

@@ -95,6 +95,8 @@ void Shader::sendTransformations(const mat4& projection, const mat4& view, const
 
     glUniformMatrix4fv(glGetUniformLocation(m_program, "MVP"), 1, GL_FALSE, MVP.data());
 
+    glUniformMatrix4fv(glGetUniformLocation(m_program, "world"), 1, GL_FALSE, model.data());
+
 //    glUniformMatrix4fv(glGetUniformLocation(m_program, "projection"), 1, GL_FALSE, projection.data());
 //    glUniformMatrix4fv(glGetUniformLocation(m_program, "modelview"), 1, GL_FALSE, view.data());
 //    glUniformMatrix4fv(glGetUniformLocation(m_program, "model"), 1, GL_FALSE, model.data());
