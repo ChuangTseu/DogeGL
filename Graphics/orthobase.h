@@ -28,13 +28,14 @@ public:
         vec3 zaxis{0, 0, 1};
 
         vec2 uvcoord{0, 0};
+        vec3 tangent{0, 0, 0};
 
         float axisLength = 1000.f;
 
         m_vertices = {
-                {origin, xaxis, uvcoord}, {xaxis*axisLength, xaxis, uvcoord},
-                {origin, yaxis, uvcoord}, {yaxis*axisLength, yaxis, uvcoord},
-                {origin, zaxis, uvcoord}, {zaxis*axisLength, zaxis, uvcoord}
+                {origin, xaxis, uvcoord, tangent}, {xaxis*axisLength, xaxis, uvcoord, tangent},
+                {origin, yaxis, uvcoord, tangent}, {yaxis*axisLength, yaxis, uvcoord, tangent},
+                {origin, zaxis, uvcoord, tangent}, {zaxis*axisLength, zaxis, uvcoord, tangent}
                      };
 
         m_vbo.submitData(m_vertices.data(), m_vertices.size());

@@ -5,11 +5,14 @@ layout(triangles, equal_spacing, cw) in;
 in Data {
     vec3 normal;
     vec2 texcoord;
+    vec3 tangent;
 } inData[];
 
 out Data {
     vec3 normal;
     vec2 texcoord;
+    vec3 tangent;
+
     vec3 position;
 } outData;
 
@@ -24,6 +27,8 @@ out Data {
 uniform mat4 MVP;
 uniform mat4 world;
 
+uniform sampler2D dispMapSampler;
+
 void main()
 {
         gl_Position.xyzw =  gl_in[0].gl_Position.xyzw * gl_TessCoord.x +
@@ -32,17 +37,20 @@ void main()
 
         outData.normal = inData[0].normal * gl_TessCoord.x + inData[1].normal * gl_TessCoord.y + inData[2].normal * gl_TessCoord.z;
         outData.texcoord = inData[0].texcoord * gl_TessCoord.x + inData[1].texcoord * gl_TessCoord.y + inData[2].texcoord * gl_TessCoord.z;
+        outData.tangent = inData[0].tangent * gl_TessCoord.x + inData[1].tangent * gl_TessCoord.y + inData[2].tangent * gl_TessCoord.z;
 
 //        fNormal = teNormal[0] * gl_TessCoord.x + teNormal[1] * gl_TessCoord.y + teNormal[2] * gl_TessCoord.z;
 //        fTexcoord = teTexcoord[0] * gl_TessCoord.x + teTexcoord[1] * gl_TessCoord.y + teTexcoord[2] * gl_TessCoord.z;
 
-//        if (!(gl_TessCoord.x != 0 && gl_TessCoord.y != 0 && gl_TessCoord.z != 0)){
-//            gl_Position.xyz += normalize(gl_Position.xyz);
+//        if (texture(dispMapSampler, outData.texcoord).x > 0) {
+//            gl_Position.xyz = gl_Position.xyz + normalize(outData.normal);
 //        }
 
+        /* Wow, such sphere */
 //        gl_Position.xyz = 3*normalize(gl_Position.xyz);
 
         outData.normal = normalize((world * vec4(normalize(outData.normal), 0)).xyz);
+        outData.tangent = normalize((world * vec4(normalize(outData.tangent), 0)).xyz);
         outData.position = (world * vec4(gl_Position.xyz, 1)).xyz;
 
         gl_Position = MVP * gl_Position;

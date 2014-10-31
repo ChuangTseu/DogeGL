@@ -15,6 +15,9 @@ bool Image::loadFromFile(std::string filename)
 
     ilBindImage(imageId);
 
+    ilEnable(IL_ORIGIN_SET);
+    ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
+
     if (ilLoadImage(filename.c_str()) != IL_TRUE) {
         std::cerr << "Error loading image from: " << filename << '\n';
         return false;

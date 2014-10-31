@@ -16,7 +16,7 @@ inline char* readFile(const std::string& filename, int* outLength) {
     int length = file.tellg();
     file.seekg (0, file.beg);
 
-    std::cerr << "File length: " << length << '\n';
+//    std::cerr << "File length: " << length << '\n';
 
     char* buffer = new char [length];
 
@@ -25,7 +25,7 @@ inline char* readFile(const std::string& filename, int* outLength) {
     //buffer[length] = 0;
 
     if (file) {
-        std::cerr << "all characters read successfully.\n";
+//        std::cerr << "all characters read successfully.\n";
     }
     else {
         std::cerr << "error: only " << file.gcount() << " could be read\n";

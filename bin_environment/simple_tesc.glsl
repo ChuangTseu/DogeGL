@@ -5,11 +5,13 @@ layout(vertices = 3) out;
 in Data {
     vec3 normal;
     vec2 texcoord;
+    vec3 tangent;
 } inData[];
 
 out Data {
     vec3 normal;
     vec2 texcoord;
+    vec3 tangent;
 } outData[];
 
 //in vec3 tcNormal[];
@@ -18,8 +20,8 @@ out Data {
 //out vec3 teNormal[];
 //out vec2 teTexcoord[];
 
-#define OUTER_LEVEL 1
-#define INNER_LEVEL 1
+#define OUTER_LEVEL 64
+#define INNER_LEVEL 64
 
 void main(void)
 {
@@ -33,6 +35,7 @@ void main(void)
 
         outData[gl_InvocationID].normal = inData[gl_InvocationID].normal;
         outData[gl_InvocationID].texcoord = inData[gl_InvocationID].texcoord;
+        outData[gl_InvocationID].tangent = inData[gl_InvocationID].tangent;
 
 //        teNormal[gl_InvocationID] = tcNormal[gl_InvocationID];
 //        teTexcoord[gl_InvocationID] = tcTexcoord[gl_InvocationID];

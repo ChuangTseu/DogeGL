@@ -102,11 +102,8 @@ bool Scene::initGL()
 #include "input.h"
 #include "orthobase.h"
 #include "texture.h"
+#include "light.h"
 
-struct DirLight {
-    vec3 m_direction;
-    vec3 m_color;
-};
 
 void Scene::mainLoop()
 {
@@ -116,6 +113,7 @@ void Scene::mainLoop()
     s.addFragmentShader("simple.frag");
     s.addTessControlShader("simple_tesc.glsl");
     s.addTessEvaluationShader("simple_tese.glsl");
+    s.addGeometryShader("simple.geom");
     s.link();
 
     Shader lineShader;
@@ -139,10 +137,20 @@ void Scene::mainLoop()
     OrthoBase base;
     Model cube;
 
-    cube.loadFromFile("cube.obj");
+//    cube.loadFromFile("cube.obj");
+
+    Model plan;
+//    plan.loadBasicType(Model::BasicType::PLAN);
+    plan.loadFromFile("plan.obj");
 
     Texture texture;
-    texture.loadFromFile("doge_512.jpg");
+    texture.loadFromFile("roundstones.jpg");
+
+    Texture normalMap;
+    normalMap.loadFromFile("roundstones_norm.jpg");
+
+    Texture dogeMap;
+    dogeMap.loadFromFile("basic_displacement_map.png");
 
     float theta = 0;
 
@@ -159,11 +167,11 @@ void Scene::mainLoop()
 
         //Bed
 
-        theta += 0.1f;
-        //A += 0.03;
+        theta += 0.01f;
+//        A += 0.03;
 
-//        x = cosf(theta);
-//        z = -sinf(theta);
+        float x = cosf(theta);
+        float z = -sinf(theta);
 
         //position = {A*x, 5.f*sin(theta*3.f), A*z};
 
@@ -203,6 +211,7 @@ void Scene::mainLoop()
             s.addFragmentShader("simple.frag");
             s.addTessControlShader("simple_tesc.glsl");
             s.addTessEvaluationShader("simple_tese.glsl");
+            s.addGeometryShader("simple.geom");
             s.link();
         }
 
@@ -215,34 +224,40 @@ void Scene::mainLoop()
 
         mat4 cubeTransformation = mat4::Identity();
 
-//        cubeTransformation.translate(0.f, 0.f, theta / 20.f);
-        cubeTransformation.rotate(normalize({0.f, 1.f, 0.f}), theta);
-//        cubeTransformation.scale(1 + theta / 20, 1, 1);
-
         s.use();        
 
+        glUniform1i(glGetUniformLocation(s.getProgramId(), "texSampler"), 0); //Texture unit 0 is for base images.
+        glUniform1i(glGetUniformLocation(s.getProgramId(), "dispMapSampler"), 1); //...
+        glUniform1i(glGetUniformLocation(s.getProgramId(), "normalMapSampler"), 2);
         texture.bindToTarget(GL_TEXTURE0);
+        dogeMap.bindToTarget(GL_TEXTURE1);
+        normalMap.bindToTarget(GL_TEXTURE2);
 
-        DirLight dirLight{vec3{-1, 0, 0}, vec3{1, 1, 1}};
+        DirLight dirLight{vec3{1, 1, 1}, vec3{-1, 0, 0}};
+//        DirLight dirLight{vec3{1, 1, 1}, vec3{x, 0, z}};
 
         glUniform3fv(glGetUniformLocation(s.getProgramId(), "dirLight.direction"), 1, dirLight.m_direction.data());
         glUniform3fv(glGetUniformLocation(s.getProgramId(), "dirLight.color"), 1, dirLight.m_color.data());
 
         glUniform3fv(glGetUniformLocation(s.getProgramId(), "eyePosition"), 1, position.data());
 
-        s.sendTransformations(projection, camera.getView(), cubeTransformation);
-
-        cube.draw();
-
-        cubeTransformation = mat4::Identity();
-
-        cubeTransformation.translate(-4.f, 0.f, 0.f);
-        cubeTransformation.scale(0.1, 10, 10);
-        cubeTransformation.rotate({1, 0, 0}, 90);
+//        cubeTransformation.rotate(normalize({0.f, 1.f, 0.f}), theta);
 
         s.sendTransformations(projection, camera.getView(), cubeTransformation);
 
-        cube.draw();
+        plan.draw();
+
+//        cube.draw();
+
+//        cubeTransformation = mat4::Identity();
+
+//        cubeTransformation.translate(-4.f, 0.f, 0.f);
+//        cubeTransformation.scale(0.1, 10, 10);
+//        cubeTransformation.rotate({1, 0, 0}, 90);
+
+//        s.sendTransformations(projection, camera.getView(), cubeTransformation);
+
+//        cube.draw();
 
         glUseProgram(0);
 

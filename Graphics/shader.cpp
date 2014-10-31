@@ -18,6 +18,11 @@ bool Shader::addTessEvaluationShader(std::string filename) {
     return addShader(filename, GL_TESS_EVALUATION_SHADER);
 }
 
+bool Shader::addGeometryShader(std::string filename)
+{
+    return addShader(filename, GL_GEOMETRY_SHADER);
+}
+
 bool Shader::addShader(std::string filename, GLenum type) {
     GLint length;
     GLchar* source = readFile(filename, &length);

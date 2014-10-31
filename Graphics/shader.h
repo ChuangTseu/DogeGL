@@ -28,6 +28,7 @@ public:
     bool addFragmentShader(std::string filename);
     bool addTessControlShader(std::string filename);
     bool addTessEvaluationShader(std::string filename);
+    bool addGeometryShader(std::string filename);
 
     bool link();
 

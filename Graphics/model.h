@@ -26,7 +26,7 @@ class Model
 
 public:
     enum class BasicType {
-        CUBE, PYRAMID, TRIANGLE
+        CUBE, PYRAMID, TRIANGLE, PLAN
     };
 
 public:
@@ -37,6 +37,7 @@ public:
     bool loadFromFile(const std::string& filename); // Later, loadFrom
 
     void draw();
+    bool loadBasicType(BasicType type);
 };
 
 #endif // MODEL_H

@@ -32,7 +32,7 @@ ENDIF(WIN32)
 
 
 file(GLOB SHADER_FILES bin_environment/*.frag bin_environment/*.vert bin_environment/*.glsl
-                       bin_environment/*.tesc bin_environment/*.tese)
+                       bin_environment/*.tesc bin_environment/*.tese bin_environment/*.geom)
 
 install(DIRECTORY bin_environment/ DESTINATION shaders
           FILES_MATCHING PATTERN "*.frag")

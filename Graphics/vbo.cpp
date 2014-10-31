@@ -10,7 +10,7 @@ VBO::VBO()
 void VBO::submitData(Vertex *vertex_data, size_t size) {
     bind();
 
-    std::cerr << "vertex_data address is: " << vertex_data << '\n';
+//    std::cerr << "vertex_data address is: " << vertex_data << '\n';
 
     glBufferData(GL_ARRAY_BUFFER, size*sizeof(Vertex), nullptr, GL_STATIC_DRAW);
     glBufferSubData(GL_ARRAY_BUFFER, 0, size*sizeof(Vertex), vertex_data);
