@@ -16,7 +16,7 @@ in Data {
 //in vec2 fTexcoord;
 
 float ka = 0.2;
-float kd = 0.5;
+float kd = 0.9;
 float ks = 2;
 float alpha = 512;
 
@@ -29,6 +29,8 @@ uniform DirLight dirLight;
 
 uniform vec3 eyePosition;
 
+uniform bool wireframe;
+
 layout(location = 0, index = 0) out vec4 fragColor;
 
 void main( void )
@@ -37,19 +39,23 @@ void main( void )
 
     vec3 normal = 2.0 * texture(normalMapSampler, inData.texcoord).xyz - vec3(1.0, 1.0, 1.0);
 
+//    normal = normalize(normal);
+
     vec3 worldNormal = normalize(inData.normal);
     vec3 worldTangent = normalize(inData.tangent);
     vec3 worldBitangent = normalize(cross(worldNormal, worldTangent));
 
     normal = normalize(mat3(worldTangent, worldBitangent, worldNormal) * normal);
 
-//    normal = normalize(mat3(worldTangent, worldBitangent, worldNormal) * vec3(0,0.05,0.95));
+//    normal = normalize(mat3(worldTangent, worldBitangent, worldNormal) * vec3(0,0,1));
 
 //    if (normal.x < 0.997) {
 //        discard;
 //    }
 
 //    normal = worldBitangent;
+
+//    normal = inData.normal;
 
     finalColor = texture(texSampler, inData.texcoord).xyz;
 
@@ -70,13 +76,17 @@ void main( void )
 
     /* DEBUG OUTPUT */
     /* WIREFRAME FAIT MAISON */
-//    float threshold = 0.01;
-//    if(inData.color.x >= threshold && inData.color.y >= threshold && inData.color.z >= threshold) {
-//        discard;
-//    }
-//    else {
-//        fragColor = vec4( inData.color, 1.0 );
-//    }
+    if (wireframe) {
+        float threshold = 0.01;
+        if(inData.color.x >= threshold && inData.color.y >= threshold && inData.color.z >= threshold) {
+            discard;
+        }
+        else {
+    //        fragColor = vec4( inData.color, 1.0 );
+        }
+    }
+
+
 
 //    fragColor = vec4(inData.texcoord, 0, 1);
 //    fragColor = vec4(texture(normalMapSampler, inData.texcoord).xyz, 1);
@@ -85,8 +95,6 @@ void main( void )
 //    fragColor = vec4(vec3(0,0,1), 1);
 //    fragColor = vec4( cross(tangent, normal), 1.0 );
 
-//    if(texture(normalMapSampler, inData.texcoord).z > 0.1) {
-//        discard;
-//    }
+
 
 }

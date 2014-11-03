@@ -11,8 +11,6 @@ class Texture
 {
     GLuint m_tex;
 
-    Image image;
-
 public:
     Texture();
 

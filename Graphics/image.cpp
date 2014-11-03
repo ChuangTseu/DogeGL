@@ -6,14 +6,18 @@ Image::Image()
 {
 }
 
+Image::~Image() {
+    ilDeleteImage(m_imageId);
+}
+
 bool Image::loadFromFile(std::string filename)
 {
     ilInit();
 
-    ILuint imageId; // The image name to return.
-    ilGenImages(1, &imageId); // Grab a new image name.
+     // The image name to return.
+    ilGenImages(1, &m_imageId); // Grab a new image name.
 
-    ilBindImage(imageId);
+    ilBindImage(m_imageId);
 
     ilEnable(IL_ORIGIN_SET);
     ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
@@ -27,6 +31,8 @@ bool Image::loadFromFile(std::string filename)
 
     m_width = ilGetInteger(IL_IMAGE_WIDTH);
     m_height = ilGetInteger(IL_IMAGE_HEIGHT);
+
+    m_bytesPerPixel = ilGetInteger(IL_IMAGE_BYTES_PER_PIXEL);
 
     return true;
 }

@@ -13,6 +13,8 @@ void Texture::bindToTarget(GLuint target)
 
 bool Texture::loadFromFile(std::string filename)
 {
+    Image image;
+
     if (!image.loadFromFile(filename))
     {
         return false;
@@ -20,7 +22,20 @@ bool Texture::loadFromFile(std::string filename)
 
     glBindTexture(GL_TEXTURE_2D, m_tex);
 
-    glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, image.getWidth(), image.getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, image.getData());
+    GLuint formatFrom;
+    switch(image.getBytesPerPixel()) {
+    case 1:
+        formatFrom = GL_RED;
+        break;
+    case 3:
+        formatFrom = GL_RGB;
+        break;
+    case 4:
+        formatFrom = GL_RGBA;
+        break;
+    }
+
+    glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, image.getWidth(), image.getHeight(), 0, formatFrom, GL_UNSIGNED_BYTE, image.getData());
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);

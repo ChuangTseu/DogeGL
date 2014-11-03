@@ -27,6 +27,22 @@ public:
     bool initGL();
     void mainLoop();
 
+    int getWindowWidth() const {
+        return m_windowWidth;
+    }
+
+    int getWindowHeight() const {
+        return m_windowHeight;
+    }
+
+    SDL_Window* getSDL_Window() {
+        return m_window;
+    }
+
+    std::string getWindowTitle() const {
+        return m_windowTitle;
+    }
+
     bool bob();
 };
 

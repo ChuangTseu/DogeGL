@@ -29,6 +29,8 @@ uniform mat4 world;
 
 uniform sampler2D dispMapSampler;
 
+uniform float userDisplacementFactor;
+
 void main()
 {
         gl_Position.xyzw =  gl_in[0].gl_Position.xyzw * gl_TessCoord.x +
@@ -42,9 +44,12 @@ void main()
 //        fNormal = teNormal[0] * gl_TessCoord.x + teNormal[1] * gl_TessCoord.y + teNormal[2] * gl_TessCoord.z;
 //        fTexcoord = teTexcoord[0] * gl_TessCoord.x + teTexcoord[1] * gl_TessCoord.y + teTexcoord[2] * gl_TessCoord.z;
 
-//        if (texture(dispMapSampler, outData.texcoord).x > 0) {
-//            gl_Position.xyz = gl_Position.xyz + normalize(outData.normal);
-//        }
+        vec3 rgb_disp = texture(dispMapSampler, outData.texcoord).xyz;
+
+        float disp_factor = 0.30*rgb_disp.x + 0.59*rgb_disp.y + 0.11*rgb_disp.z;
+
+        gl_Position.xyz = gl_Position.xyz + normalize(outData.normal)*disp_factor*userDisplacementFactor;
+
 
         /* Wow, such sphere */
 //        gl_Position.xyz = 3*normalize(gl_Position.xyz);

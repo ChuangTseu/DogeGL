@@ -175,12 +175,12 @@ bool Model::loadFromFile(const std::string& filename)
 
         const aiVector3D& aiBitangent = mesh->mBitangents[idVertex];
 
-        vec3 bitangent{aiBitangent.x, aiBitangent.y, aiBitangent.z};
+//        vec3 bitangent{aiBitangent.x, aiBitangent.y, aiBitangent.z};
 
-        std::cerr << "normal " << idVertex << ": " << v.normal << ' ';
-        std::cerr << "tangent " << idVertex << ": " << v.tangent << ' ';
-        std::cerr << "bitangent " << idVertex << ": " << bitangent << ' ';
-        std::cerr << "cross " << idVertex << ": " << cross(v.tangent, v.normal) << '\n';
+//        std::cerr << "normal " << idVertex << ": " << v.normal << ' ';
+//        std::cerr << "tangent " << idVertex << ": " << v.tangent << ' ';
+//        std::cerr << "bitangent " << idVertex << ": " << bitangent << ' ';
+//        std::cerr << "cross " << idVertex << ": " << cross(v.tangent, v.normal) << '\n';
 
         m_vertices.push_back(v);
     }
@@ -225,6 +225,29 @@ void Model::draw() {
 //    glDrawElements(GL_LINE_STRIP, m_indices.size(), GL_UNSIGNED_INT, nullptr);
 
 
+
+    glBindVertexArray(0);
+}
+
+void Model::drawAsPatch() {
+
+    glBindVertexArray(m_vao);
+
+    glPatchParameteri(GL_PATCH_VERTICES, 3);
+
+    glDrawElements(GL_PATCHES, m_indices.size(), GL_UNSIGNED_INT, nullptr);
+//    glDrawElements(GL_LINE_STRIP, m_indices.size(), GL_UNSIGNED_INT, nullptr);
+
+
+
+    glBindVertexArray(0);
+}
+
+void Model::drawAsTriangles() {
+
+    glBindVertexArray(m_vao);
+
+    glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, nullptr);
 
     glBindVertexArray(0);
 }

@@ -14,8 +14,14 @@ class Image
 
     unsigned char* m_data;
 
+    unsigned int m_bytesPerPixel;
+
+    ILuint m_imageId;
+
 public:
     Image();
+
+    ~Image();
 
     bool loadFromFile(std::string filename);
 
@@ -25,6 +31,10 @@ public:
 
     unsigned int getHeight() const {
         return m_height;
+    }
+
+    unsigned int getBytesPerPixel() const {
+        return m_bytesPerPixel;
     }
 
     const unsigned char* getData() const {

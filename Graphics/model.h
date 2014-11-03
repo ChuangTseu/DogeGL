@@ -38,6 +38,8 @@ public:
 
     void draw();
     bool loadBasicType(BasicType type);
+    void drawAsTriangles();
+    void drawAsPatch();
 };
 
 #endif // MODEL_H
