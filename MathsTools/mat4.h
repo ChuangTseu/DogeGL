@@ -158,6 +158,11 @@ public:
         return (*this) *= r;
     }
 
+    mat4& translate(vec3 direction) {
+
+        return translate(direction.x, direction.y, direction.z);
+    }
+
     mat4& scale(float x, float y, float z) {
 
         mat4 r{x,                 0.f,                0.f,                0.f,

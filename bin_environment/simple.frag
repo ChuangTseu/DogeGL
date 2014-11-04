@@ -25,13 +25,47 @@ struct DirLight {
     vec3 color;
 };
 
+struct PointLight {
+    vec3 position;
+    vec3 color;
+};
+
 uniform DirLight dirLight;
+uniform PointLight pointLight;
 
 uniform vec3 eyePosition;
 
 uniform bool wireframe;
 
 layout(location = 0, index = 0) out vec4 fragColor;
+
+vec3 blinn_phong_calc_internal(vec3 lightDir, vec3 color, vec3 normal) {
+    float Ia = 0.9;
+    float Id = clamp(dot(normal, lightDir), 0, 1);
+
+    vec3 viewDir = normalize(eyePosition - inData.position);
+    vec3 halfV = normalize(lightDir + viewDir);
+
+    float Is = 0;
+    if (Id > 0) {
+        Is = pow(clamp(dot(normal, halfV), 0, 1), alpha);
+    }
+
+    return ((ka*Ia + kd*Id + ks*Is) * color);
+}
+
+vec3 blinn_phong_calc(DirLight light, vec3 normal) {
+    vec3 lightDir = normalize(-light.direction);
+
+    return blinn_phong_calc_internal(lightDir, light.color, normal);
+}
+
+vec3 blinn_phong_calc(PointLight light, vec3 normal) {
+    vec3 lightDir = normalize(light.position - eyePosition);
+
+    return blinn_phong_calc_internal(lightDir, light.color, normal);
+}
+
 
 void main( void )
 {
@@ -59,18 +93,7 @@ void main( void )
 
     finalColor = texture(texSampler, inData.texcoord).xyz;
 
-    float Ia = 0.9;
-    float Id = clamp(dot(normal, -dirLight.direction), 0, 1);
-
-    vec3 viewDir = normalize(eyePosition - inData.position);
-    vec3 halfV = normalize(normalize(-dirLight.direction) + viewDir);
-
-    float Is = 0;
-    if (Id > 0) {
-        Is = pow(clamp(dot(normal, halfV), 0, 1), alpha);
-    }
-
-    vec3 Cfinal = ka*dirLight.color*Ia + kd*dirLight.color*Id + ks*dirLight.color*Is;
+    vec3 Cfinal = blinn_phong_calc(dirLight, normal) + blinn_phong_calc(pointLight, normal);
 
     fragColor = vec4( finalColor * Cfinal, 1.0 );
 

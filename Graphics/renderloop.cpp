@@ -53,6 +53,13 @@ void RenderLoop(Scene& scene)
     plan.loadFromFile("plan.obj");
 //    plan.loadFromFile("arrow_cone.obj");
 
+    Model basicLamp;
+    basicLamp.loadFromFile("sphere.obj");
+    Shader basicLampShader;
+    basicLampShader.addVertexShader("line.vert");
+    basicLampShader.addFragmentShader("line.frag");
+    basicLampShader.link();
+
 
     /* TEXTURES */
 
@@ -196,10 +203,15 @@ void RenderLoop(Scene& scene)
 //        }
 
 //        DirLight dirLight{vec3{1, 1, 1}, vec3{-1, 0, z}};
+
         DirLight dirLight{vec3{1, 1, 1}, vec3{-1, 0, 0}};
+        PointLight pointLight{vec3{0, 1, 0}, vec3{x*10, 0, z*10}};
 
         glUniform3fv(glGetUniformLocation(s.getProgramId(), "dirLight.direction"), 1, dirLight.m_direction.data());
         glUniform3fv(glGetUniformLocation(s.getProgramId(), "dirLight.color"), 1, dirLight.m_color.data());
+
+        glUniform3fv(glGetUniformLocation(s.getProgramId(), "pointLight.position"), 1, pointLight.m_position.data());
+        glUniform3fv(glGetUniformLocation(s.getProgramId(), "pointLight.color"), 1, pointLight.m_color.data());
 
         glUniform3fv(glGetUniformLocation(s.getProgramId(), "eyePosition"), 1, position.data());
 
@@ -214,19 +226,22 @@ void RenderLoop(Scene& scene)
         glUniform1i(glGetUniformLocation(s.getProgramId(), "wireframe"), wireframe);
 
         /* FIRE! */
-        plan.draw();
+        plan.drawAsPatch();
 
-//        cube.draw();
 
-//        cubeTransformation = mat4::Identity();
+        glUseProgram(0);
 
-//        cubeTransformation.translate(-4.f, 0.f, 0.f);
-//        cubeTransformation.scale(0.1, 10, 10);
-//        cubeTransformation.rotate({1, 0, 0}, 90);
 
-//        s.sendTransformations(projection, camera.getView(), cubeTransformation);
+        mat4 lampTransformation = mat4::Identity();
 
-//        cube.draw();
+        lampTransformation.translate(pointLight.m_position);
+
+        basicLampShader.use();
+        basicLampShader.sendTransformations(projection, camera.getView(), lampTransformation);
+        glUniform1i(glGetUniformLocation(basicLampShader.getProgramId(), "overrideColor"), true);
+        glUniform3fv(glGetUniformLocation(basicLampShader.getProgramId(), "userColor"), 1, pointLight.m_color.data());
+
+        basicLamp.drawAsTriangles();
 
         glUseProgram(0);
 
