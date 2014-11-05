@@ -14,63 +14,28 @@ Model::Model()
 {
 }
 
-bool Model::loadBasicType(BasicType type) {
+bool Model::loadFullscreenQuad() {
     m_vertices.clear();
     m_indices.clear();
 
-    if (type == BasicType::CUBE) {
-        m_vertices = {{{-1.0f, -1.0f, -1.0f}, {-1.0f, -1.0f, -1.0f}, {0,0}},
-                      {{1.0f, -1.0f, -1.0f},  {1.0f, -1.0f, -1.0f}, {0,0}},
-                      {{1.0f, 1.0f, -1.0f},   {1.0f, 1.0f, -1.0f}, {0,0}},     // Face 1
-                      {{-1.0f, 1.0f, -1.0f},  {-1.0f, 1.0f, -1.0f}, {0,0}},
-                      {{1.0f, -1.0f, 1.0f},   {1.0f, -1.0f, 1.0f}, {0,0}},
-                      {{1.0f, 1.0f, 1.0f},    {1.0f, 1.0f, 1.0f}, {0,0}},
-                      {{-1.0f, -1.0f, 1.0f},  {-1.0f, -1.0f, 1.0f}, {0,0}},
-                      {{-1.0f, 1.0f, 1.0f},   {-1.0f, 1.0f, 1.0f}, {0,0}} };
+    std::vector<vec3> quadVertices;
+    std::vector<GLuint> quadIndices;
 
-        m_indices = {0,   1,   2,
-                    0,   3,   2,
-                    4,   1,   2,
-                    4,   5,   2,
-                    6,   4,   1,
-                    6,   0,   1,
-                    6,   4,   5,
-                    6,   7,   5,
-                    0,   6,   7,
-                    0,   3,   7,
-                    7,   5,   2,
-                    7,   3,   2};
-    }
-    else if (type == BasicType::PLAN) {
-        m_vertices = {{{0.0f, -1.0f, 1.0f},  {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-                      {{0.0f, -1.0f, -1.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
-                      {{0.0f, 1.0f, 1.0f},   {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}},
-                      {{0.0f, 1.0f, -1.0f},  {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f}}};
+    quadVertices = {{-1.f, -1.f, 0.f}, {1.f, -1.f, 0.f}, {1.f, 1.f, 0.f}, {-1.f, 1.f, 0.f}};
+    quadIndices = {0, 1, 2,
+                   0, 2, 3};
 
-        m_indices = {0,   1,   2,
-                     1,   2,   3};
-    }
-    else {
-        std::cerr << "BasicType (" << static_cast<int>(type) << ") not yet implemented" << '\n';
-        return false;
-    }
+    m_vbo.submitData(quadVertices.data(), quadVertices.size());
+    m_ibo.submitData(quadIndices.data(), quadIndices.size());
 
-    m_vbo.submitData(m_vertices.data(), m_vertices.size());
-    m_ibo.submitData(m_indices.data(), m_indices.size());
-
+//    m_indices = std::move(quadIndices);
 
     glGenVertexArrays(1, &m_vao);
     glBindVertexArray(m_vao);
 
     m_vbo.bind();
-    glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
     glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1, 3, GL_FLOAT, false, sizeof(Vertex), BUFFER_OFFSET(sizeof(vec3)));
-    glEnableVertexAttribArray(1);
-
-    glVertexAttribPointer(2, 2, GL_FLOAT, false, sizeof(Vertex), BUFFER_OFFSET(2*sizeof(vec3)));
-    glEnableVertexAttribArray(2);
 
     m_ibo.bind();
 
@@ -78,6 +43,74 @@ bool Model::loadBasicType(BasicType type) {
 
     VBO::unbind();
     IBO::unbind();
+
+    return true;
+}
+
+bool Model::loadBasicType(BasicType type) {
+//    m_vertices.clear();
+//    m_indices.clear();
+
+//    if (type == BasicType::CUBE) {
+//        m_vertices = {{{-1.0f, -1.0f, -1.0f}, {-1.0f, -1.0f, -1.0f}, {0,0}},
+//                      {{1.0f, -1.0f, -1.0f},  {1.0f, -1.0f, -1.0f}, {0,0}},
+//                      {{1.0f, 1.0f, -1.0f},   {1.0f, 1.0f, -1.0f}, {0,0}},     // Face 1
+//                      {{-1.0f, 1.0f, -1.0f},  {-1.0f, 1.0f, -1.0f}, {0,0}},
+//                      {{1.0f, -1.0f, 1.0f},   {1.0f, -1.0f, 1.0f}, {0,0}},
+//                      {{1.0f, 1.0f, 1.0f},    {1.0f, 1.0f, 1.0f}, {0,0}},
+//                      {{-1.0f, -1.0f, 1.0f},  {-1.0f, -1.0f, 1.0f}, {0,0}},
+//                      {{-1.0f, 1.0f, 1.0f},   {-1.0f, 1.0f, 1.0f}, {0,0}} };
+
+//        m_indices = {0,   1,   2,
+//                    0,   3,   2,
+//                    4,   1,   2,
+//                    4,   5,   2,
+//                    6,   4,   1,
+//                    6,   0,   1,
+//                    6,   4,   5,
+//                    6,   7,   5,
+//                    0,   6,   7,
+//                    0,   3,   7,
+//                    7,   5,   2,
+//                    7,   3,   2};
+//    }
+//    else if (type == BasicType::PLAN) {
+//        m_vertices = {{{0.0f, -1.0f, 1.0f},  {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+//                      {{0.0f, -1.0f, -1.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
+//                      {{0.0f, 1.0f, 1.0f},   {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}},
+//                      {{0.0f, 1.0f, -1.0f},  {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f}}};
+
+//        m_indices = {0,   1,   2,
+//                     1,   2,   3};
+//    }
+//    else {
+//        std::cerr << "BasicType (" << static_cast<int>(type) << ") not yet implemented" << '\n';
+//        return false;
+//    }
+
+//    m_vbo.submitData(m_vertices.data(), m_vertices.size());
+//    m_ibo.submitData(m_indices.data(), m_indices.size());
+
+
+//    glGenVertexArrays(1, &m_vao);
+//    glBindVertexArray(m_vao);
+
+//    m_vbo.bind();
+//    glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), 0);
+//    glEnableVertexAttribArray(0);
+
+//    glVertexAttribPointer(1, 3, GL_FLOAT, false, sizeof(Vertex), BUFFER_OFFSET(sizeof(vec3)));
+//    glEnableVertexAttribArray(1);
+
+//    glVertexAttribPointer(2, 2, GL_FLOAT, false, sizeof(Vertex), BUFFER_OFFSET(2*sizeof(vec3)));
+//    glEnableVertexAttribArray(2);
+
+//    m_ibo.bind();
+
+//    glBindVertexArray(0);
+
+//    VBO::unbind();
+//    IBO::unbind();
 
     return true;
 }
@@ -238,8 +271,6 @@ void Model::drawAsPatch() {
     glDrawElements(GL_PATCHES, m_indices.size(), GL_UNSIGNED_INT, nullptr);
 //    glDrawElements(GL_LINE_STRIP, m_indices.size(), GL_UNSIGNED_INT, nullptr);
 
-
-
     glBindVertexArray(0);
 }
 
@@ -248,6 +279,16 @@ void Model::drawAsTriangles() {
     glBindVertexArray(m_vao);
 
     glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, nullptr);
+
+    glBindVertexArray(0);
+}
+
+void Model::drawAsFullscreenQuad() {
+    glBindVertexArray(m_vao);
+
+//    glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, nullptr);
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
     glBindVertexArray(0);
 }

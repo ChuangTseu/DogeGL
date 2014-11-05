@@ -47,3 +47,26 @@ bool Texture::loadFromFile(std::string filename)
 
     return true;
 }
+
+
+bool Texture::loadEmpty(int width, int height, GLuint gl_format)
+{
+    glBindTexture(GL_TEXTURE_2D, m_tex);
+
+//    GLuint pixelDataType;
+
+//    if (gl_format == GL_DEPTH_COMPONENT24) {
+//        pixelDataType = GL_FLOAT;
+//    }
+
+    glTexImage2D(GL_TEXTURE_2D, 0, gl_format, width, height, 0, gl_format, GL_UNSIGNED_BYTE, 0);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    //IF DEPTH BUFFER TEXTURE
+    //        glTexImage2D(GL_TEXTURE_2D, 0,GL_DEPTH_COMPONENT24, 1024, 768, 0,GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+
+
+    return true;
+}

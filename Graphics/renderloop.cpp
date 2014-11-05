@@ -9,9 +9,13 @@
 #include "shader.h"
 #include "camera.h"
 #include "scene.h"
+#include "fbo.h"
 
 void RenderLoop(Scene& scene)
 {
+    FBO fbo;
+
+
     /* SHADERS */
     Shader s;
 
@@ -21,6 +25,12 @@ void RenderLoop(Scene& scene)
     s.addTessEvaluationShader("simple_tese.glsl");
     s.addGeometryShader("simple.geom");
     s.link();
+
+    Shader quadFboShader;
+
+//    quadFboShader.addVertexShader("quadFbo.vert");
+    quadFboShader.addFragmentShader("quadFbo.frag");
+    quadFboShader.link();
 
 
     /* CAMERA */
@@ -59,6 +69,9 @@ void RenderLoop(Scene& scene)
     basicLampShader.addVertexShader("line.vert");
     basicLampShader.addFragmentShader("line.frag");
     basicLampShader.link();
+
+    Model quadFbo;
+    quadFbo.loadFullscreenQuad();
 
 
     /* TEXTURES */
@@ -180,9 +193,20 @@ void RenderLoop(Scene& scene)
 
         /* AT LAST: DA RENDERING */
 
+#define USE_FBO 1
+#ifdef USE_FBO
+        fbo.bind();
+
+        GLuint attachments[1] = { GL_COLOR_ATTACHMENT0 };
+        glDrawBuffers(1,  attachments);
+#endif
+
 //        glClearColor(1.f, 1.f, 1.f, 0); // WHITE
         glClearColor(0.f, 0.f, 0.f, 0); // BLACK
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+//#define DISABLE_MAIN_RENDERING 1
+#ifndef DISABLE_MAIN_RENDERING
 
         /* Bind a shader */
         s.use();
@@ -251,6 +275,24 @@ void RenderLoop(Scene& scene)
 
 
         base.draw(projection, camera.getView());
+
+#endif
+
+#ifdef USE_FBO
+        FBO::unbind();
+
+        glClearColor(0.f, 0.f, 0.f, 0); // BLACK
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        quadFboShader.use();
+
+        fbo.getTexture().bindToTarget(GL_TEXTURE0);
+
+        quadFbo.drawAsFullscreenQuad();
+
+        glUseProgram(0);
+#endif
+
 
         /* SWAP BUFFERS */
         SDL_GL_SwapWindow(scene.getSDL_Window());

@@ -40,6 +40,8 @@ public:
     bool loadBasicType(BasicType type);
     void drawAsTriangles();
     void drawAsPatch();
+    bool loadFullscreenQuad();
+    void drawAsFullscreenQuad();
 };
 
 #endif // MODEL_H
