@@ -1,5 +1,7 @@
 #include "texture.h"
 
+#include <iostream>
+
 Texture::Texture()
 {
     glGenTextures(1, &m_tex);
@@ -49,7 +51,7 @@ bool Texture::loadFromFile(std::string filename)
 }
 
 
-bool Texture::loadEmpty(int width, int height, GLuint gl_format)
+bool Texture::loadEmpty(int width, int height, TargetType type)
 {
     glBindTexture(GL_TEXTURE_2D, m_tex);
 
@@ -59,13 +61,20 @@ bool Texture::loadEmpty(int width, int height, GLuint gl_format)
 //        pixelDataType = GL_FLOAT;
 //    }
 
-    glTexImage2D(GL_TEXTURE_2D, 0, gl_format, width, height, 0, gl_format, GL_UNSIGNED_BYTE, 0);
+    if (type == TargetType::COLOR) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    }
+    else if (type == TargetType::DEPTH) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+    }
+    else {
+        std::cerr << "Wrong TargetType type for empty texture \n";
+
+        return false;
+    }
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    //IF DEPTH BUFFER TEXTURE
-    //        glTexImage2D(GL_TEXTURE_2D, 0,GL_DEPTH_COMPONENT24, 1024, 768, 0,GL_DEPTH_COMPONENT, GL_FLOAT, 0);
 
 
     return true;

@@ -13,7 +13,7 @@
 
 void RenderLoop(Scene& scene)
 {
-    FBO fbo;
+    FBO fbo(scene.getWindowWidth(), scene.getWindowHeight(), 3);
 
 
     /* SHADERS */
@@ -121,6 +121,8 @@ void RenderLoop(Scene& scene)
 
     bool wireframe = false;
 
+    int fboTexId = 0;
+
 
     /* DA MAIN LOOP*/
 
@@ -191,14 +193,29 @@ void RenderLoop(Scene& scene)
             wireframe = !wireframe;
         }
 
+        if (input.getKey(SDL_SCANCODE_KP_0)) {
+            fboTexId = 0;      }
+        else if (input.getKey(SDL_SCANCODE_KP_1)) {
+            fboTexId = 1;      }
+        else if (input.getKey(SDL_SCANCODE_KP_2)) {
+            fboTexId = 2;      }
+        else if (input.getKey(SDL_SCANCODE_KP_3)) {
+            fboTexId = 3;      }
+        else if (input.getKey(SDL_SCANCODE_KP_4)) {
+            fboTexId = 4;      }
+        else if (input.getKey(SDL_SCANCODE_KP_5)) {
+            fboTexId = 5;      }
+        else if (input.getKey(SDL_SCANCODE_KP_6)) {
+            fboTexId = 6;      }
+
         /* AT LAST: DA RENDERING */
 
 #define USE_FBO 1
 #ifdef USE_FBO
         fbo.bind();
 
-        GLuint attachments[1] = { GL_COLOR_ATTACHMENT0 };
-        glDrawBuffers(1,  attachments);
+        GLuint attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+        glDrawBuffers(3,  attachments);
 #endif
 
 //        glClearColor(1.f, 1.f, 1.f, 0); // WHITE
@@ -285,8 +302,10 @@ void RenderLoop(Scene& scene)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         quadFboShader.use();
+        glUniform1i(glGetUniformLocation(quadFboShader.getProgramId(), "screenWidth"), scene.getWindowWidth());
+        glUniform1i(glGetUniformLocation(quadFboShader.getProgramId(), "screenHeight"), scene.getWindowHeight());
 
-        fbo.getTexture().bindToTarget(GL_TEXTURE0);
+        fbo.getTexture(fboTexId).bindToTarget(GL_TEXTURE0);
 
         quadFbo.drawAsFullscreenQuad();
 

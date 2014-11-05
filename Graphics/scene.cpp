@@ -1,6 +1,8 @@
 #include "scene.h"
 
-Scene::Scene()
+Scene::Scene(int width, int height, int type) : m_windowWidth(width),
+    m_windowHeight(height),
+    m_type(type)
 {
 }
 
@@ -28,7 +30,14 @@ bool Scene::initWindow() {
 
     // Window
 
-    m_window = SDL_CreateWindow(m_windowTitle.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, m_windowWidth, m_windowHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+    Uint32 windowAttributesFlags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+
+    if (m_type == FULLSCREEN) {
+        windowAttributesFlags |= SDL_WINDOW_FULLSCREEN;
+    }
+
+    m_window = SDL_CreateWindow(m_windowTitle.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                                m_windowWidth, m_windowHeight, windowAttributesFlags);
 
     if(!m_window)
     {

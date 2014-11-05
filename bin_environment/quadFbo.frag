@@ -2,10 +2,10 @@
 
 uniform sampler2D texSampler;
 
-layout(location = 0, index = 0) out vec4 fragColor;
+uniform int screenWidth;
+uniform int screenHeight;
 
-int screenWidth = 640;
-int screenHeight = 480;
+layout(location = 0, index = 0) out vec4 fragColor;
 
 void main( void )
 {

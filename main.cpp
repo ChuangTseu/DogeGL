@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     (void) argv;
 
 
-    Scene scene;
+    Scene scene(640, 480);
 
     scene.initWindow();
 

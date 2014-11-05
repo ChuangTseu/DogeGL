@@ -14,14 +14,19 @@
 class Scene
 {    
     std::string m_windowTitle = "FirstWindow";
-    int m_windowWidth = 640;
-    int m_windowHeight = 480;
+    int m_windowWidth;
+    int m_windowHeight;
+    int m_type;
 
     SDL_Window* m_window;
     SDL_GLContext m_openGLContext;
 
 public:
-    Scene();
+    Scene(int width, int height, int type = WINDOWED);
+
+    enum {
+        FULLSCREEN, WINDOWED
+    };
 
     bool initWindow();
     bool initGL();

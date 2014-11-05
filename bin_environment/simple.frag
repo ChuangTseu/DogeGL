@@ -37,7 +37,9 @@ uniform vec3 eyePosition;
 
 uniform bool wireframe;
 
-layout(location = 0, index = 0) out vec4 fragColor;
+layout(location = 0) out vec4 fragColor;
+layout(location = 1) out vec4 normalColor;
+layout(location = 2) out vec4 texcoordColor;
 
 vec3 blinn_phong_calc_internal(vec3 lightDir, vec3 color, vec3 normal) {
     float Ia = 0.9;
@@ -118,6 +120,6 @@ void main( void )
 //    fragColor = vec4(vec3(0,0,1), 1);
 //    fragColor = vec4( cross(tangent, normal), 1.0 );
 
-
-
+    normalColor = vec4(normal, 1);
+    texcoordColor = vec4(inData.texcoord, 0, 1);
 }
