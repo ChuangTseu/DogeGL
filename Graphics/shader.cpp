@@ -36,7 +36,7 @@ bool Shader::addShader(std::string filename, GLenum type) {
 
     GLuint shaderId = glCreateShader(type);
 
-    glShaderSource(shaderId, 1, &source, &length);
+    glShaderSource(shaderId, 1, (const char**)&source, &length);
 
     free(source);
 

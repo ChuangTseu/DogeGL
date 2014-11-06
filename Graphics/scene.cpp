@@ -66,7 +66,8 @@ bool Scene::initGL()
     std::cout << "OpenGL Version : " << glGetString(GL_VERSION) << std::endl;
     std::cout << "OpenGL Vendor : " << glGetString(GL_VENDOR) << std::endl;
 
-    #ifdef WIN32
+    // EVERYONE ON EVERY PLATFORM WILL ENJOY THIS
+//    #ifdef WIN32
 
     // On initialise GLEW
 
@@ -94,7 +95,7 @@ bool Scene::initGL()
     }
 
 
-    #endif
+//    #endif
 
     // Activation du Depth Buffer
 

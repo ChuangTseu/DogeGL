@@ -33,6 +33,8 @@ void Camera::lookAt(const vec3& eye, const vec3& center, const vec3& up) {
                      s.z, u.z, f.z, 0.0f,
                      0.0f, 0.0f, 0.0f, 1.0f};
 
+    m_pureView = m_worldToView;
+
 //    m_worldToView.m_data[3][0] = eye.x;
 //    m_worldToView.m_data[3][1] = eye.y;
 //    m_worldToView.m_data[3][2] = eye.z;
@@ -44,16 +46,12 @@ void Camera::lookAt(const vec3& eye, const vec3& center, const vec3& up) {
         translation.m_data[3][2] = -eye.z;
 
         m_worldToView = m_worldToView * translation;
-
-        vec4 P = {1, 1, 1, 1};
-
-        vec4 Pk = m_worldToView * P;
-
-        Pk = m_projection * Pk;
-
-        //std::cerr << "Pk: " << Pk << '\n';
 }
 
 const mat4& Camera::getView() {
     return m_worldToView;
+}
+
+const mat4& Camera::getPureViewNoTranslation() {
+    return m_pureView;
 }

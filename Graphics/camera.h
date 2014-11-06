@@ -10,7 +10,9 @@
 class Camera
 {
     mat4 m_worldToView;
-    mat4 m_projection;
+
+    //WARNING, No translation
+    mat4 m_pureView;
 
     vec3 m_position;
     vec3 m_lookAt;
@@ -24,6 +26,7 @@ public:
     void lookAt(const vec3& eye, const vec3& center, const vec3& up);
 
     const mat4& getView();
+    const mat4 &getPureViewNoTranslation();
 };
 
 #endif // CAMERA_H

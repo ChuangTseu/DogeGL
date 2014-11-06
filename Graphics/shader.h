@@ -24,6 +24,10 @@ public:
         glDeleteProgram(m_program);
     }
 
+    static void unbind() {
+        glUseProgram(0);
+    }
+
     bool addVertexShader(std::string filename);
     bool addFragmentShader(std::string filename);
     bool addTessControlShader(std::string filename);

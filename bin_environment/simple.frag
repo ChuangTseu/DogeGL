@@ -3,6 +3,8 @@
 uniform sampler2D texSampler;
 uniform sampler2D normalMapSampler;
 
+uniform samplerCube cubeMapSampler;
+
 in Data {
     vec3 normal;
     vec2 texcoord;
@@ -95,6 +97,8 @@ void main( void )
 
     finalColor = texture(texSampler, inData.texcoord).xyz;
 
+    finalColor = texture(cubeMapSampler, reflect(normalize(eyePosition - inData.position), normal)).xyz;
+
     vec3 Cfinal = blinn_phong_calc(dirLight, normal) + blinn_phong_calc(pointLight, normal);
 
     fragColor = vec4( finalColor * Cfinal, 1.0 );
@@ -110,6 +114,8 @@ void main( void )
     //        fragColor = vec4( inData.color, 1.0 );
         }
     }
+
+//    fragColor = texture(cubeMapSampler, reflect(normalize(eyePosition - inData.position), normal));
 
 
 

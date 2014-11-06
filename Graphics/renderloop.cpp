@@ -10,11 +10,12 @@
 #include "camera.h"
 #include "scene.h"
 #include "fbo.h"
+#include "cubemap.h"
+#include "skybox.h"
 
 void RenderLoop(Scene& scene)
 {
     FBO fbo(scene.getWindowWidth(), scene.getWindowHeight(), 3);
-
 
     /* SHADERS */
     Shader s;
@@ -56,7 +57,7 @@ void RenderLoop(Scene& scene)
     OrthoBase base;
 
     Model cube;
-//    cube.loadFromFile("cube.obj");
+    cube.loadFromFile("cube.obj");
 
     Model plan;
 //    plan.loadBasicType(Model::BasicType::PLAN);
@@ -105,6 +106,20 @@ void RenderLoop(Scene& scene)
 //    dogeMap.loadFromFile("basic_displacement_map.png");
     dogeMap.loadFromFile("disp_data/wall002_hmap2_512x512.jpg");
 
+
+    Cubemap cubemap;
+
+    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_X, "Ryfjallet_512/posx.jpg");
+    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_X, "Ryfjallet_512/negx.jpg");
+    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_Y, "Ryfjallet_512/negy.jpg");
+    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_Y, "Ryfjallet_512/posy.jpg");
+    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_Z, "Ryfjallet_512/posz.jpg");
+    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_Z, "Ryfjallet_512/negz.jpg");
+
+
+    Skybox skybox;
+
+    skybox.feedCubemap(cubemap);
 
     // Pure FPS Mode
     SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -225,6 +240,10 @@ void RenderLoop(Scene& scene)
 //#define DISABLE_MAIN_RENDERING 1
 #ifndef DISABLE_MAIN_RENDERING
 
+
+        skybox.render(projection, camera.getPureViewNoTranslation());
+
+
         /* Bind a shader */
         s.use();
 
@@ -235,6 +254,12 @@ void RenderLoop(Scene& scene)
         texture.bindToTarget(GL_TEXTURE0);
         dogeMap.bindToTarget(GL_TEXTURE1);
         normalMap.bindToTarget(GL_TEXTURE2);
+
+        glUniform1i(glGetUniformLocation(s.getProgramId(), "cubeMapSampler"), 0);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap.getId());
+
+
 
         /* WATEEEEEEER */
 //        waterMaps[waterTexIndex].bindToTarget(GL_TEXTURE2);
@@ -270,7 +295,7 @@ void RenderLoop(Scene& scene)
         plan.drawAsPatch();
 
 
-        glUseProgram(0);
+        Shader::unbind();
 
 
         mat4 lampTransformation = mat4::Identity();
@@ -284,7 +309,7 @@ void RenderLoop(Scene& scene)
 
         basicLamp.drawAsTriangles();
 
-        glUseProgram(0);
+        Shader::unbind();
 
         /* And so on for every other model... */
         /* Currently handmade, for developing/testing purposes */
@@ -309,7 +334,7 @@ void RenderLoop(Scene& scene)
 
         quadFbo.drawAsFullscreenQuad();
 
-        glUseProgram(0);
+        Shader::unbind();
 #endif
 
 
