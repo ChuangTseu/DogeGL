@@ -33,6 +33,9 @@ void RenderLoop(Scene& scene)
     quadFboShader.addFragmentShader("quadFbo.frag");
     quadFboShader.link();
 
+    Mesh quadFbo;
+    quadFbo.loadFullscreenQuad();
+
 
     /* CAMERA */
 
@@ -70,9 +73,6 @@ void RenderLoop(Scene& scene)
     basicLampShader.addVertexShader("line.vert");
     basicLampShader.addFragmentShader("line.frag");
     basicLampShader.link();
-
-    Model quadFbo;
-    quadFbo.loadFullscreenQuad();
 
 
     /* TEXTURES */
@@ -332,7 +332,7 @@ void RenderLoop(Scene& scene)
 
         fbo.getTexture(fboTexId).bindToTarget(GL_TEXTURE0);
 
-        quadFbo.drawAsFullscreenQuad();
+        quadFbo.draw();
 
         Shader::unbind();
 #endif
