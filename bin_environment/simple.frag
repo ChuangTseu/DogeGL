@@ -5,6 +5,10 @@ uniform sampler2D normalMapSampler;
 
 uniform samplerCube cubeMapSampler;
 
+uniform sampler2D shadowMapSampler;
+
+uniform mat4 lightMVP;
+
 in Data {
     vec3 normal;
     vec2 texcoord;
@@ -115,16 +119,31 @@ void main( void )
         }
     }
 
-//    fragColor = texture(cubeMapSampler, reflect(normalize(eyePosition - inData.position), normal));
 
 
+    vec4 lightSpaceFragPosition = lightMVP * vec4(inData.position, 1);
 
-//    fragColor = vec4(inData.texcoord, 0, 1);
-//    fragColor = vec4(texture(normalMapSampler, inData.texcoord).xyz, 1);
+    vec3 projCoords = lightSpaceFragPosition.xyz / lightSpaceFragPosition.w;
 
-//    fragColor = vec4( normal, 1.0 );
-//    fragColor = vec4(vec3(0,0,1), 1);
-//    fragColor = vec4( cross(tangent, normal), 1.0 );
+    vec2 shadowMapUVCoords;
+    shadowMapUVCoords.x = 0.5 * projCoords.x + 0.5;
+    shadowMapUVCoords.y = 0.5 * projCoords.y + 0.5;
+    float z = 0.5 * projCoords.z + 0.5;
+
+    float shadowFactor;
+
+    float depth = texture(shadowMapSampler, shadowMapUVCoords).x;
+    if (depth < (z - 0.00001))
+        shadowFactor = 0.0;
+    else
+        shadowFactor = 1.0;
+
+    fragColor = fragColor * shadowFactor;
+
+    fragColor = vec4(shadowFactor);
+
+
+    //    fragColor = texture(cubeMapSampler, reflect(normalize(eyePosition - inData.position), normal));
 
     normalColor = vec4(normal, 1);
     texcoordColor = vec4(inData.texcoord, 0, 1);

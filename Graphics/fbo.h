@@ -16,8 +16,11 @@ class FBO
 
     GLuint m_depthRenderBufferId;
 
+    size_t m_width;
+    size_t m_height;
+
 public:
-    FBO(int width, int height, int numColorTextures = 1, bool useTextureForDepth = true) {
+    FBO(int width, int height, int numColorTextures = 1, bool useTextureForDepth = true) : m_width(width), m_height(height) {
         glGenFramebuffers(1, &m_fboId);
 
         glBindFramebuffer(GL_FRAMEBUFFER, m_fboId);
@@ -57,6 +60,14 @@ public:
 
     GLuint getId() const {
         return m_fboId;
+    }
+
+    size_t getWidth() const {
+        return m_width;
+    }
+
+    size_t getHeight() const {
+        return m_height;
     }
 
     Texture& getTexture(unsigned int id) {

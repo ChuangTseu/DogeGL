@@ -80,6 +80,8 @@ public:
                        0.f,         0.f,    (-2*far*near / (far - near)),                0.f};
     }
 
+    static mat4 LookAt(const vec3& eye, const vec3& center, const vec3& up);
+
     mat4& operator+=(const mat4& other) {
         std::transform(pBegin(), pEnd(), other.pBegin(), pBegin(), std::plus<float>());
 
@@ -225,6 +227,25 @@ inline vec4 operator*(const mat4 lhs, const vec4& rhs) {
 
     return ret;
 
+}
+
+inline mat4 mat4::LookAt(const vec3& eye, const vec3& center, const vec3& up) {
+    vec3 f = normalize(center - eye);
+    vec3 s = normalize(cross(normalize(up), f));
+    vec3 u = normalize(cross(f, s));
+
+    mat4 worldToView = {s.x, u.x, f.x, 0.0f,
+                        s.y, u.y, f.y, 0.0f,
+                        s.z, u.z, f.z, 0.0f,
+                        0.0f, 0.0f, 0.0f, 1.0f};
+
+    mat4 translation;
+    translation.identity();
+    translation.m_data[3][0] = -eye.x;
+    translation.m_data[3][1] = -eye.y;
+    translation.m_data[3][2] = -eye.z;
+
+    return worldToView * translation;
 }
 
 #endif // MAT4_H

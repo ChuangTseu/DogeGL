@@ -20,8 +20,8 @@ out Data {
 //out vec3 teNormal[];
 //out vec2 teTexcoord[];
 
-#define OUTER_LEVEL 64
-#define INNER_LEVEL 64
+#define OUTER_LEVEL 1
+#define INNER_LEVEL 1
 
 void main(void)
 {

@@ -66,6 +66,9 @@ bool Texture::loadEmpty(int width, int height, TargetType type)
     }
     else if (type == TargetType::DEPTH) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     }
     else {
         std::cerr << "Wrong TargetType type for empty texture \n";

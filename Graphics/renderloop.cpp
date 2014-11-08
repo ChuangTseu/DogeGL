@@ -12,6 +12,7 @@
 #include "fbo.h"
 #include "cubemap.h"
 #include "skybox.h"
+#include "shadowmap.h"
 
 void RenderLoop(Scene& scene)
 {
@@ -43,7 +44,7 @@ void RenderLoop(Scene& scene)
 
     camera.setProperties({0.f, 0.f, -1.f}, {0.f, 0.f, 1.f}, {0.f, 1.f, 0.f});
 
-    mat4 projection = mat4::Projection(70, (float) scene.getWindowWidth()/scene.getWindowHeight(), 0.1f, 10000.f);
+    mat4 projection = mat4::Projection(70, (float) scene.getWindowWidth()/scene.getWindowHeight(), 0.1f, 1000.f);
 
     vec3 up{0, 1, 0};
     vec3 position{5.f, 5.f, 5.f};
@@ -64,8 +65,9 @@ void RenderLoop(Scene& scene)
 
     Model plan;
 //    plan.loadBasicType(Model::BasicType::PLAN);
-    plan.loadFromFile("plan.obj");
-//    plan.loadFromFile("arrow_cone.obj");
+//    plan.loadFromFile("plan.obj");
+//    plan.loadFromFile("cube_and_floor.obj");
+    plan.loadFromFile("Worn_Down_House/destroyed_house.obj");
 
     Model basicLamp;
     basicLamp.loadFromFile("sphere.obj");
@@ -120,6 +122,12 @@ void RenderLoop(Scene& scene)
     Skybox skybox;
 
     skybox.feedCubemap(cubemap);
+
+
+    /* SHADOW MAP */
+    Shadowmap shadowmap(1024, 1024);
+
+
 
     // Pure FPS Mode
     SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -223,25 +231,34 @@ void RenderLoop(Scene& scene)
         else if (input.getKey(SDL_SCANCODE_KP_6)) {
             fboTexId = 6;      }
 
+
+
         /* AT LAST: DA RENDERING */
 
-#define USE_FBO 1
-#ifdef USE_FBO
+
+        /* Do your model transformations */
+        mat4 cubeTransformation = mat4::Identity();
+//        cubeTransformation.translate(5,0,0);
+//        cubeTransformation.rotate(normalize({0.f, 0.f, 1.f}), -90.f);
+
+        /* Get your lights ready */
+        DirLight dirLight{vec3{1, 1, 1}, vec3{-1, 0, 0}};
+        PointLight pointLight{vec3{0, 1, 0}, vec3{x*10, 0, z*10}};
+
+
         fbo.bind();
 
         GLuint attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
         glDrawBuffers(3,  attachments);
-#endif
 
-//        glClearColor(1.f, 1.f, 1.f, 0); // WHITE
+
         glClearColor(0.f, 0.f, 0.f, 0); // BLACK
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-//#define DISABLE_MAIN_RENDERING 1
-#ifndef DISABLE_MAIN_RENDERING
-
 
         skybox.render(projection, camera.getPureViewNoTranslation());
+
+        FBO::unbind();
 
 
         /* Bind a shader */
@@ -251,6 +268,7 @@ void RenderLoop(Scene& scene)
         glUniform1i(glGetUniformLocation(s.getProgramId(), "texSampler"), 0); //Texture unit 0 is for base images.
         glUniform1i(glGetUniformLocation(s.getProgramId(), "dispMapSampler"), 1); //...
         glUniform1i(glGetUniformLocation(s.getProgramId(), "normalMapSampler"), 2);
+        glUniform1i(glGetUniformLocation(s.getProgramId(), "shadowMapSampler"), 3);
         texture.bindToTarget(GL_TEXTURE0);
         dogeMap.bindToTarget(GL_TEXTURE1);
         normalMap.bindToTarget(GL_TEXTURE2);
@@ -260,19 +278,6 @@ void RenderLoop(Scene& scene)
         glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap.getId());
 
 
-
-        /* WATEEEEEEER */
-//        waterMaps[waterTexIndex].bindToTarget(GL_TEXTURE2);
-
-//        if (counter == 0) {
-//            waterTexIndex = (waterTexIndex + 1) % 250;
-//        }
-
-//        DirLight dirLight{vec3{1, 1, 1}, vec3{-1, 0, z}};
-
-        DirLight dirLight{vec3{1, 1, 1}, vec3{-1, 0, 0}};
-        PointLight pointLight{vec3{0, 1, 0}, vec3{x*10, 0, z*10}};
-
         glUniform3fv(glGetUniformLocation(s.getProgramId(), "dirLight.direction"), 1, dirLight.m_direction.data());
         glUniform3fv(glGetUniformLocation(s.getProgramId(), "dirLight.color"), 1, dirLight.m_color.data());
 
@@ -281,18 +286,36 @@ void RenderLoop(Scene& scene)
 
         glUniform3fv(glGetUniformLocation(s.getProgramId(), "eyePosition"), 1, position.data());
 
-        /* Do your model transformations */
-        mat4 cubeTransformation = mat4::Identity();
-//        cubeTransformation.translate(5,0,0);
-//        cubeTransformation.rotate(normalize({0.f, 0.f, 1.f}), -90.f);
-
-        s.sendTransformations(projection, camera.getView(), cubeTransformation);
 
         glUniform1f(glGetUniformLocation(s.getProgramId(), "userDisplacementFactor"), userDisplacementFactor);
         glUniform1i(glGetUniformLocation(s.getProgramId(), "wireframe"), wireframe);
 
-        /* FIRE! */
+
+
+        /* SHADOW PASS */
+        mat4 lightProjection = mat4::Projection(70, 1.f, 0.1f, 1000.f);
+        mat4 lightView = mat4::LookAt(vec3{15.f, 15.f, 15.f}, vec3{0, 0, 0}, vec3{0, 1, 0});
+
+        mat4 lightMVP = lightProjection * lightView;        
+
+        s.sendTransformations(lightProjection, lightView, cubeTransformation);
+
+        shadowmap.bind();
+
         plan.drawAsPatch();
+
+        shadowmap.unbind();
+
+        /* FIRE! */
+        s.sendTransformations(projection, camera.getView(), cubeTransformation);
+        glUniformMatrix4fv(glGetUniformLocation(s.getProgramId(), "lightMVP"), 1, GL_FALSE, lightMVP.data());
+
+        shadowmap.bindShadowMapToTarget(GL_TEXTURE3);
+
+        fbo.bind();
+
+        plan.drawAsPatch();
+
 
 
         Shader::unbind();
@@ -318,9 +341,6 @@ void RenderLoop(Scene& scene)
 
         base.draw(projection, camera.getView());
 
-#endif
-
-#ifdef USE_FBO
         FBO::unbind();
 
         glClearColor(0.f, 0.f, 0.f, 0); // BLACK
@@ -331,18 +351,20 @@ void RenderLoop(Scene& scene)
         glUniform1i(glGetUniformLocation(quadFboShader.getProgramId(), "screenHeight"), scene.getWindowHeight());
 
         fbo.getTexture(fboTexId).bindToTarget(GL_TEXTURE0);
+//        shadowFbo.getTexture(0).bindToTarget(GL_TEXTURE0);
 
         quadFbo.draw();
 
         Shader::unbind();
-#endif
 
 
         /* SWAP BUFFERS */
         SDL_GL_SwapWindow(scene.getSDL_Window());
 
+
         /* ARBITRARILY LIMIT THE FRAMERATE, WE DON'T NEED OUR GPU TO CRY RENDERING A DUMB CUBE */
         SDL_Delay(8);
+
 
 
         /* HERE GOES OUR MAGNIFICENT PERFORMANCE MONITOR */

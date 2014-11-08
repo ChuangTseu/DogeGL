@@ -22,16 +22,11 @@ bool Mesh::loadFromAssimpMesh(const aiMesh *mesh) {
     }
 
     assert( mesh->HasNormals() );
-    assert( mesh->HasTangentsAndBitangents() );
+//    assert( mesh->HasTangentsAndBitangents() );
 
     for (unsigned int idVertex = 0; idVertex < mesh->mNumVertices; ++idVertex) {
         const aiVector3D& vertex = mesh->mVertices[idVertex];
         const aiVector3D& normal = mesh->mNormals[idVertex];
-
-        const aiVector3D& texcoord = (mesh->HasTextureCoords(0) ?
-                                          mesh->mTextureCoords[0][idVertex] : aiVector3D{0.f, 0.f, 0.f});
-
-        const aiVector3D& tangent = mesh->mTangents[idVertex];
 
         Vertex v;
         v.position.x = vertex.x;
@@ -42,12 +37,21 @@ bool Mesh::loadFromAssimpMesh(const aiMesh *mesh) {
         v.normal.y = normal.y;
         v.normal.z = normal.z;
 
-        v.texcoord.x = texcoord.x;
-        v.texcoord.y = texcoord.y;
+        if (mesh->HasTangentsAndBitangents()) {
+            const aiVector3D& texcoord = (mesh->HasTextureCoords(0) ?
+                                              mesh->mTextureCoords[0][idVertex] : aiVector3D{0.f, 0.f, 0.f});
 
-        v.tangent.x = tangent.x;
-        v.tangent.y = tangent.y;
-        v.tangent.z = tangent.z;
+            const aiVector3D& tangent = mesh->mTangents[idVertex];
+
+            v.texcoord.x = texcoord.x;
+            v.texcoord.y = texcoord.y;
+
+            v.tangent.x = tangent.x;
+            v.tangent.y = tangent.y;
+            v.tangent.z = tangent.z;
+        }
+
+
 
         //            const aiVector3D& aiBitangent = mesh->mBitangents[idVertex];
 
