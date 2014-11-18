@@ -8,6 +8,8 @@
 
 #include "MathsTools/mat4.h"
 
+#include "material.h"
+
 
 
 class Shader {
@@ -43,6 +45,8 @@ public:
     }
 
     void sendTransformations(const mat4 &projection, const mat4 &view, const mat4 &model);
+
+    void sendMaterial(const Material& mat);
 
     void renew() {
         glDeleteProgram(m_program);

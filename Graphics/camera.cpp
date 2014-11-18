@@ -28,7 +28,7 @@ void Camera::lookAt(const vec3& eye, const vec3& center, const vec3& up) {
 //    std::cerr << "u: " << u << '\n';
 //    std::cerr << '\n';
 
-    m_worldToView = {s.x, u.x, f.x, 0.0f,
+    m_worldToView = mat4{s.x, u.x, f.x, 0.0f,
                      s.y, u.y, f.y, 0.0f,
                      s.z, u.z, f.z, 0.0f,
                      0.0f, 0.0f, 0.0f, 1.0f};

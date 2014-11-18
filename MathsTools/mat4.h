@@ -234,7 +234,7 @@ inline mat4 mat4::LookAt(const vec3& eye, const vec3& center, const vec3& up) {
     vec3 s = normalize(cross(normalize(up), f));
     vec3 u = normalize(cross(f, s));
 
-    mat4 worldToView = {s.x, u.x, f.x, 0.0f,
+    mat4 worldToView = mat4{s.x, u.x, f.x, 0.0f,
                         s.y, u.y, f.y, 0.0f,
                         s.z, u.z, f.z, 0.0f,
                         0.0f, 0.0f, 0.0f, 1.0f};

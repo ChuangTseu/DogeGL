@@ -39,11 +39,11 @@ public:
 
         float axisLength = 10.f;
 
-        m_vertices = {
-                {origin, xaxis, uvcoord, tangent}, {xaxis*axisLength, xaxis, uvcoord, tangent},
-                {origin, yaxis, uvcoord, tangent}, {yaxis*axisLength, yaxis, uvcoord, tangent},
-                {origin, zaxis, uvcoord, tangent}, {zaxis*axisLength, zaxis, uvcoord, tangent}
-                     };
+        m_vertices = std::vector<Vertex>{
+                Vertex{origin, xaxis, uvcoord, tangent}, Vertex{xaxis*axisLength, xaxis, uvcoord, tangent},
+                Vertex{origin, yaxis, uvcoord, tangent}, Vertex{yaxis*axisLength, yaxis, uvcoord, tangent},
+                Vertex{origin, zaxis, uvcoord, tangent}, Vertex{zaxis*axisLength, zaxis, uvcoord, tangent}
+                                        };
 
         m_vbo.submitData(m_vertices.data(), m_vertices.size());
 

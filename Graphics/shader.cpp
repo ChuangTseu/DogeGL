@@ -104,5 +104,14 @@ void Shader::sendTransformations(const mat4& projection, const mat4& view, const
 
 //    glUniformMatrix4fv(glGetUniformLocation(m_program, "projection"), 1, GL_FALSE, projection.data());
 //    glUniformMatrix4fv(glGetUniformLocation(m_program, "modelview"), 1, GL_FALSE, view.data());
-//    glUniformMatrix4fv(glGetUniformLocation(m_program, "model"), 1, GL_FALSE, model.data());
+    //    glUniformMatrix4fv(glGetUniformLocation(m_program, "model"), 1, GL_FALSE, model.data());
+}
+
+void Shader::sendMaterial(const Material &mat)
+{
+    glUniform3fv(glGetUniformLocation(m_program, "ka"), 1, mat.m_ambientReflectance.data);
+    glUniform3fv(glGetUniformLocation(m_program, "kd"), 1, mat.m_diffuseReflectance.data);
+    glUniform3fv(glGetUniformLocation(m_program, "ks"), 1, mat.m_specularReflectance.data);
+
+    glUniform1f(glGetUniformLocation(m_program, "shininess"), mat.m_specularExponent);
 }

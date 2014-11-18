@@ -58,24 +58,22 @@ void RenderLoop(Scene& scene)
 
     /* MODELS */
 
-    OrthoBase base;
-
-    Model cube;
-    cube.loadFromFile("cube.obj");
-
     Model plan;
 //    plan.loadBasicType(Model::BasicType::PLAN);
 //    plan.loadFromFile("plan.obj");
 //    plan.loadFromFile("cube_and_floor.obj");
-    plan.loadFromFile("Worn_Down_House/destroyed_house.obj");
+//    plan.loadFromFile("Worn_Down_House/destroyed_house.obj");
+    plan.loadFromFile("hi_sphere.obj");
 
     Model basicLamp;
-    basicLamp.loadFromFile("sphere.obj");
+    basicLamp.loadFromFile("hi_sphere.obj");
     Shader basicLampShader;
     basicLampShader.addVertexShader("line.vert");
     basicLampShader.addFragmentShader("line.frag");
     basicLampShader.link();
 
+
+    OrthoBase base;
 
     /* TEXTURES */
 
@@ -111,12 +109,12 @@ void RenderLoop(Scene& scene)
 
     Cubemap cubemap;
 
-    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_X, "Ryfjallet_512/posx.jpg");
-    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_X, "Ryfjallet_512/negx.jpg");
-    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_Y, "Ryfjallet_512/negy.jpg");
-    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_Y, "Ryfjallet_512/posy.jpg");
-    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_Z, "Ryfjallet_512/posz.jpg");
-    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_Z, "Ryfjallet_512/negz.jpg");
+    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_X, "Ryfjallet_512_y_flipped/posx.jpg");
+    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_X, "Ryfjallet_512_y_flipped/negx.jpg");
+    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_Y, "Ryfjallet_512_y_flipped/posy.jpg");
+    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_Y, "Ryfjallet_512_y_flipped/negy.jpg");
+    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_Z, "Ryfjallet_512_y_flipped/posz.jpg");
+    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_Z, "Ryfjallet_512_y_flipped/negz.jpg");
 
 
     Skybox skybox;
@@ -151,6 +149,8 @@ void RenderLoop(Scene& scene)
 
     while(!input.updateEvents() == Input::QUIT_EVENT)
     {
+//        glEnable(44);
+
         const uint64_t start_time = SDL_GetPerformanceCounter();
 
         //Bed
@@ -242,7 +242,7 @@ void RenderLoop(Scene& scene)
 //        cubeTransformation.rotate(normalize({0.f, 0.f, 1.f}), -90.f);
 
         /* Get your lights ready */
-        DirLight dirLight{vec3{1, 1, 1}, vec3{-1, 0, 0}};
+        DirLight dirLight{vec3{1, 1, 1}, vec3{0, -1, -1}};
         PointLight pointLight{vec3{0, 1, 0}, vec3{x*10, 0, z*10}};
 
 
@@ -257,6 +257,7 @@ void RenderLoop(Scene& scene)
 
 
         skybox.render(projection, camera.getPureViewNoTranslation());
+//        skybox.render(projection, camera.getView());
 
         FBO::unbind();
 
@@ -314,9 +315,7 @@ void RenderLoop(Scene& scene)
 
         fbo.bind();
 
-        plan.drawAsPatch();
-
-
+        plan.drawAsPatch(&s);
 
         Shader::unbind();
 

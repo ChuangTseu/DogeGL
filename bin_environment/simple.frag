@@ -21,11 +21,6 @@ in Data {
 //in vec3 fNormal;
 //in vec2 fTexcoord;
 
-float ka = 0.2;
-float kd = 0.9;
-float ks = 2;
-float alpha = 512;
-
 struct DirLight {
     vec3 direction;
     vec3 color;
@@ -43,12 +38,23 @@ uniform vec3 eyePosition;
 
 uniform bool wireframe;
 
+//Material
+//uniform vec3 ka;
+//uniform vec3 kd;
+//uniform vec3 ks;
+//uniform float shininess;
+
+vec3 ka = vec3(1, 1, 1);
+vec3 kd = vec3(1, 1, 1);
+vec3 ks = vec3(1, 1, 1);
+float shininess = 64;
+
+
 layout(location = 0) out vec4 fragColor;
 layout(location = 1) out vec4 normalColor;
 layout(location = 2) out vec4 texcoordColor;
 
 vec3 blinn_phong_calc_internal(vec3 lightDir, vec3 color, vec3 normal) {
-    float Ia = 0.9;
     float Id = clamp(dot(normal, lightDir), 0, 1);
 
     vec3 viewDir = normalize(eyePosition - inData.position);
@@ -56,10 +62,12 @@ vec3 blinn_phong_calc_internal(vec3 lightDir, vec3 color, vec3 normal) {
 
     float Is = 0;
     if (Id > 0) {
-        Is = pow(clamp(dot(normal, halfV), 0, 1), alpha);
+        Is = pow(clamp(dot(normal, halfV), 0, 1), shininess);
     }
 
-    return ((ka*Ia + kd*Id + ks*Is) * color);
+    // Replace the 3 colors by light ambiant, diffuse and specular intensity respectively
+    float tmpAmbientFactor = 0.1;
+    return (ka*color*tmpAmbientFactor + kd*Id*color + ks*Is*color);
 }
 
 vec3 blinn_phong_calc(DirLight light, vec3 normal) {
@@ -74,6 +82,25 @@ vec3 blinn_phong_calc(PointLight light, vec3 normal) {
     return blinn_phong_calc_internal(lightDir, light.color, normal);
 }
 
+const mat4 gracered = mat4(
+   0.009098, -0.004780,  0.024033, -0.014947 ,
+  -0.004780, -0.009098, -0.011258,  0.020210 ,
+   0.024033, -0.011258, -0.011570, -0.017383 ,
+  -0.014947,  0.020210, -0.017383,  0.073787
+) ;
+const mat4 gracegreen = mat4(
+  -0.002331, -0.002184,  0.009201, -0.002846 ,
+  -0.002184,  0.002331, -0.009611,  0.017903 ,
+   0.009201, -0.009611, -0.007038, -0.009331 ,
+  -0.002846,  0.017903, -0.009331,  0.041083
+) ;
+const mat4 graceblue = mat4(
+  -0.013032, -0.005248,  0.005970,  0.000483 ,
+  -0.005248,  0.013032, -0.020370,  0.030949 ,
+   0.005970, -0.020370, -0.010948, -0.013784 ,
+   0.000483,  0.030949, -0.013784,  0.051648
+) ;
+
 
 void main( void )
 {
@@ -81,7 +108,7 @@ void main( void )
 
     vec3 normal = 2.0 * texture(normalMapSampler, inData.texcoord).xyz - vec3(1.0, 1.0, 1.0);
 
-//    normal = normalize(normal);
+    normal = normalize(normal);
 
     vec3 worldNormal = normalize(inData.normal);
     vec3 worldTangent = normalize(inData.tangent);
@@ -95,17 +122,16 @@ void main( void )
 //        discard;
 //    }
 
-//    normal = worldBitangent;
-
-//    normal = inData.normal;
+//    normal = normalize(inData.normal);
 
     finalColor = texture(texSampler, inData.texcoord).xyz;
 
-    finalColor = texture(cubeMapSampler, reflect(normalize(eyePosition - inData.position), normal)).xyz;
+//    finalColor = texture(cubeMapSampler, reflect(normalize(eyePosition - inData.position), normal)).xyz;
 
     vec3 Cfinal = blinn_phong_calc(dirLight, normal) + blinn_phong_calc(pointLight, normal);
 
     fragColor = vec4( finalColor * Cfinal, 1.0 );
+
 
     /* DEBUG OUTPUT */
     /* WIREFRAME FAIT MAISON */
@@ -118,8 +144,6 @@ void main( void )
     //        fragColor = vec4( inData.color, 1.0 );
         }
     }
-
-
 
     vec4 lightSpaceFragPosition = lightMVP * vec4(inData.position, 1);
 
@@ -134,17 +158,26 @@ void main( void )
 
     float depth = texture(shadowMapSampler, shadowMapUVCoords).x;
     if (depth < (z - 0.00001))
-        shadowFactor = 0.0;
+        shadowFactor = 0.5;
     else
         shadowFactor = 1.0;
 
-    fragColor = fragColor * shadowFactor;
-
-    fragColor = vec4(shadowFactor);
+    fragColor = fragColor;// * shadowFactor;
 
 
-    //    fragColor = texture(cubeMapSampler, reflect(normalize(eyePosition - inData.position), normal));
+    fragColor = texture(cubeMapSampler, reflect(-normalize(eyePosition - inData.position), normal));
 
     normalColor = vec4(normal, 1);
     texcoordColor = vec4(inData.texcoord, 0, 1);
+
+//    normal = normalize(inData.normal);
+
+
+//    vec4 n = vec4(normal, 1);
+
+//    float albedo = 6.5;
+
+//    fragColor.x = dot(n, (gracered) * n) * albedo;
+//    fragColor.y = dot(n, (gracegreen) * n) * albedo;
+//    fragColor.z = dot(n, (graceblue) * n) * albedo;
 }

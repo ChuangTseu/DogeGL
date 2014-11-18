@@ -94,8 +94,7 @@ bool Model::loadFromFile(const std::string& filename)
                                 | aiComponent_ANIMATIONS
                                 | aiComponent_TEXTURES
                                 | aiComponent_LIGHTS
-                                | aiComponent_CAMERAS
-                                | aiComponent_MATERIALS);
+                                | aiComponent_CAMERAS);
 
     // And have it read the given file with some example postprocessing
     // Usually - if speed is not the most important aspect for you - you'll
@@ -114,16 +113,26 @@ bool Model::loadFromFile(const std::string& filename)
     {
         std::cerr << importer.GetErrorString() << '\n';
         return false;
-    }
-    // Now we can access the file's contents.
-    std::cerr << "Model contains " << scene->mNumMeshes << " meshes" << '\n';
+    }    
 
     m_meshes.clear();
-
     m_meshes.resize(scene->mNumMeshes);
+
+    m_materials.clear();
+    m_materials.resize(scene->mNumMaterials);
+
+    std::cerr << filename << '\n';
+    std::cerr << "Model contains " << scene->mNumMeshes << " meshes" << '\n';
+    std::cerr << "Model contains " << scene->mNumMaterials << " materials" << '\n';
+    std::cerr << '\n';
+
 
     for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
         m_meshes[i].loadFromAssimpMesh(scene->mMeshes[i]);
+    }
+
+    for (unsigned int i = 0; i < scene->mNumMaterials; ++i) {
+        m_materials[i].loadFromAssimpMaterial(scene->mMaterials[i]);
     }
 
 //    const aiMesh* mesh = scene->mMeshes[0];
@@ -144,14 +153,24 @@ bool Model::loadFromFile(const std::string& filename)
     return true;
 }
 
-void Model::draw() const {
-    drawAsTriangles();
+void Model::draw(Shader *s) const {
+    drawAsTriangles(s);
 }
 
-void Model::drawAsPatch() const {
-    for (const Mesh& mesh : m_meshes) mesh.drawAsPatch();
+void Model::drawAsPatch(Shader *s) const {
+    for (const Mesh& mesh : m_meshes) {
+        if (s) {
+            s->sendMaterial(m_materials[mesh.m_materialIndex]);
+        }
+        mesh.drawAsPatch();
+    }
 }
 
-void Model::drawAsTriangles() const {
-    for (const Mesh& mesh : m_meshes) mesh.drawAsTriangles();
+void Model::drawAsTriangles(Shader *s) const {
+    for (const Mesh& mesh : m_meshes) {
+        if (s) {
+            s->sendMaterial(m_materials[mesh.m_materialIndex]);
+        }
+        mesh.drawAsTriangles();
+    }
 }

@@ -21,6 +21,8 @@ struct Mesh {
 
     GLuint m_vao;
 
+    unsigned int m_materialIndex;
+
     bool loadFromAssimpMesh(const aiMesh* mesh);
 
     void draw() const;

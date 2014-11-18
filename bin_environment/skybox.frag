@@ -11,6 +11,15 @@ void main( void )
     //WARNING: Inverting skyboxTexcoord vector direction
     //My bet is on: I go Right handed, Cubemap is "left handed"
     //Watever, it "works" :p
-    fragColor = texture(skyboxSampler, -skyboxTexcoord);
-//    fragColor = vec4(1,0,0,1);
+//    fragColor = texture(skyboxSampler, skyboxTexcoord)*0.5 + vec4(skyboxTexcoord,1);
+//    fragColor = vec4(skyboxTexcoord,1);
+
+    fragColor = texture(skyboxSampler, skyboxTexcoord);
+
+//    if (abs(skyboxTexcoord.y) > abs(skyboxTexcoord.x) && abs(skyboxTexcoord.y) > abs(skyboxTexcoord.z)) {
+//        fragColor = texture(skyboxSampler, vec3(skyboxTexcoord.x, skyboxTexcoord.y, skyboxTexcoord.z));
+//    }
+//    else {
+//        fragColor = texture(skyboxSampler, vec3(skyboxTexcoord.x, -skyboxTexcoord.y, skyboxTexcoord.z));
+//    }
 }

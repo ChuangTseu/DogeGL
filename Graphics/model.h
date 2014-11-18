@@ -2,12 +2,16 @@
 #define MODEL_H
 
 #include "mesh.h"
+#include "material.h"
+#include "shader.h"
+
 #include <string>
 #include <vector>
 
 class Model
 {
     std::vector<Mesh> m_meshes;
+    std::vector<Material> m_materials;
 
 public:
     enum class BasicType {
@@ -21,11 +25,13 @@ public:
 
     bool loadFromFile(const std::string& filename); // Later, loadFrom
 
-    void draw() const;
+
     bool loadBasicType(BasicType type);
-    void drawAsTriangles() const;
-    void drawAsPatch() const;
     bool loadFullscreenQuad();
+
+    void draw(Shader* s = nullptr) const;
+    void drawAsTriangles(Shader* s = nullptr) const;
+    void drawAsPatch(Shader* s = nullptr) const;
 };
 
 #endif // MODEL_H
