@@ -68,10 +68,10 @@ void RenderLoop(Scene& scene)
 //    plan.loadBasicType(Model::BasicType::PLAN);
 //    plan.loadFromFile("plan.obj");
 //    plan.loadFromFile("cube_and_floor.obj");
-//    plan.loadFromFile("Worn_Down_House/destroyed_house.obj");
+    plan.loadFromFile("Worn_Down_House/destroyed_house.obj");
 //    plan.loadFromFile("hi_sphere.obj");
 //    plan.loadFromFile("Astroboy/astroBoy_walk_Maya.dae");
-    plan.loadFromFile("SimpleModel/demo.dae");
+//    plan.loadFromFile("SimpleModel/demo.dae");
 
     Model basicLamp;
     basicLamp.loadFromFile("hi_sphere.obj");

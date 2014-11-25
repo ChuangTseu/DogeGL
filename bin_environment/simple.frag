@@ -5,7 +5,7 @@ uniform sampler2D normalMapSampler;
 
 uniform samplerCube cubeMapSampler;
 
-uniform sampler2D shadowMapSampler;
+uniform sampler2DShadow shadowMapSampler;
 
 uniform mat4 lightMVP;
 
@@ -151,20 +151,21 @@ void main( void )
 
     vec3 projCoords = lightSpaceFragPosition.xyz / lightSpaceFragPosition.w;
 
-    vec2 shadowMapUVCoords;
+    vec3 shadowMapUVCoords;
     shadowMapUVCoords.x = 0.5 * projCoords.x + 0.5;
     shadowMapUVCoords.y = 0.5 * projCoords.y + 0.5;
+    shadowMapUVCoords.z = 0.5 * projCoords.z + 0.5;
     float z = 0.5 * projCoords.z + 0.5;
+
+    shadowMapUVCoords.z = shadowMapUVCoords.z - 0.00002;
 
     float shadowFactor;
 
-    float depth = texture(shadowMapSampler, shadowMapUVCoords).x;
-    if (depth < (z - 0.00001))
-        shadowFactor = 0.1;
-    else
-        shadowFactor = 1.0;
+    float depth = texture(shadowMapSampler, shadowMapUVCoords);
 
-//    fragColor = fragColor * shadowFactor;
+    shadowFactor = depth;
+
+    fragColor = fragColor * shadowFactor;
 
 
 //    fragColor = texture(cubeMapSampler, reflect(-normalize(eyePosition - inData.position), normal));
