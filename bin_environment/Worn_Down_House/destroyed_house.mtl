@@ -3,63 +3,63 @@ illum 4
 Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
-map_Kd beam_destroyed_house.psd
+map_Kd beam_destroyed_house.jpg
 Ni 1.00
 newmtl initialShadingGroup
 illum 4
 Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
-map_Kd door_destroyed_house.psd
+map_Kd door_destroyed_house.jpg
 Ni 1.00
 newmtl lambert3SG
 illum 4
 Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
-map_Kd techo.psd
+map_Kd roof.jpg
 Ni 1.00
 newmtl lambert5SG
 illum 4
 Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
-map_Kd frontwall.psd
+map_Kd frontwall.jpg
 Ni 1.00
 newmtl lambert7SG
 illum 4
 Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
-map_Kd brick.psd
+map_Kd brick.jpg
 Ni 1.00
 newmtl lambert8SG
 illum 4
 Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
-map_Kd base_destroyed_house.psd
+map_Kd base_destroyed_house.jpg
 Ni 1.00
 newmtl lambert11SG
 illum 4
 Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
-map_Kd left_side_wall.psd
+map_Kd left_side_wall.jpg
 Ni 1.00
 newmtl lambert14SG
 illum 4
 Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
-map_Kd rear_wall_destroyed_house.psd
+map_Kd rear_wall_destroyed_house.jpg
 Ni 1.00
 newmtl lambert17SG
 illum 4
 Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
-map_Kd ground.psd
+map_Kd ground.jpg
 Ni 1.00
 newmtl lambert18SG
 illum 4
@@ -73,7 +73,7 @@ illum 4
 Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
-map_Kd barrel_destroyed_hose.jpg
+map_Kd barrel_destroyed_house.jpg
 Ni 1.00
 Ks 0.50 0.50 0.50
 Ns 18.00
