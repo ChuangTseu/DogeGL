@@ -16,6 +16,12 @@ struct vec3
             float y;
             float z;
         };
+
+        struct {
+            float r;
+            float g;
+            float b;
+        };
     };
 
 
@@ -25,7 +31,16 @@ public:
     }
 
     const float* data() const {
-        return (float*)m_data;
+        return (const float*)m_data;
+    }
+
+    template<class RGBLike>
+    vec3& operator=(const RGBLike& rgblike) {
+        r = static_cast<float>(rgblike.r);
+        g = static_cast<float>(rgblike.g);
+        b = static_cast<float>(rgblike.b);
+
+        return *this;
     }
 
     vec3& operator+=(const vec3& other) {
@@ -82,6 +97,9 @@ public:
 
 
 };
+
+
+typedef vec3 Color3f;
 
 inline vec3 normalize(vec3 v) {
     v.normalize();

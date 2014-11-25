@@ -109,9 +109,13 @@ void Shader::sendTransformations(const mat4& projection, const mat4& view, const
 
 void Shader::sendMaterial(const Material &mat)
 {
-    glUniform3fv(glGetUniformLocation(m_program, "ka"), 1, mat.m_ambientReflectance.data);
-    glUniform3fv(glGetUniformLocation(m_program, "kd"), 1, mat.m_diffuseReflectance.data);
-    glUniform3fv(glGetUniformLocation(m_program, "ks"), 1, mat.m_specularReflectance.data);
+    glUniform3fv(glGetUniformLocation(m_program, "ka"), 1, mat.m_ambientReflectance.data());
+    glUniform3fv(glGetUniformLocation(m_program, "kd"), 1, mat.m_diffuseReflectance.data());
+    glUniform3fv(glGetUniformLocation(m_program, "ks"), 1, mat.m_specularReflectance.data());
 
     glUniform1f(glGetUniformLocation(m_program, "shininess"), mat.m_specularExponent);
+
+    mat.m_diffuseTexture.bindToTarget(GL_TEXTURE0);
+    mat.m_normalTexture.bindToTarget(GL_TEXTURE1);
+
 }

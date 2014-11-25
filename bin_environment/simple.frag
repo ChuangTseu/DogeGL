@@ -39,15 +39,15 @@ uniform vec3 eyePosition;
 uniform bool wireframe;
 
 //Material
-//uniform vec3 ka;
-//uniform vec3 kd;
-//uniform vec3 ks;
-//uniform float shininess;
+uniform vec3 ka;
+uniform vec3 kd;
+uniform vec3 ks;
+uniform float shininess;
 
-vec3 ka = vec3(1, 1, 1);
-vec3 kd = vec3(1, 1, 1);
-vec3 ks = vec3(1, 1, 1);
-float shininess = 64;
+//vec3 ka = vec3(1, 1, 1);
+//vec3 kd = vec3(1, 1, 1);
+//vec3 ks = vec3(1, 1, 1);
+//float shininess = 64;
 
 
 layout(location = 0) out vec4 fragColor;
@@ -67,7 +67,7 @@ vec3 blinn_phong_calc_internal(vec3 lightDir, vec3 color, vec3 normal) {
 
     // Replace the 3 colors by light ambiant, diffuse and specular intensity respectively
     float tmpAmbientFactor = 0.1;
-    return (ka*color*tmpAmbientFactor + kd*Id*color + ks*Is*color);
+    return (ka*color*tmpAmbientFactor + texture(texSampler, inData.texcoord).xyz*Id*color + ks*Is*color);
 }
 
 vec3 blinn_phong_calc(DirLight light, vec3 normal) {
@@ -116,6 +116,8 @@ void main( void )
 
     normal = normalize(mat3(worldTangent, worldBitangent, worldNormal) * normal);
 
+//    normal = vec3(gl_FrontFacing ? 1 : -1);
+
 //    normal = normalize(mat3(worldTangent, worldBitangent, worldNormal) * vec3(0,0,1));
 
 //    if (normal.x < 0.997) {
@@ -130,7 +132,7 @@ void main( void )
 
     vec3 Cfinal = blinn_phong_calc(dirLight, normal) + blinn_phong_calc(pointLight, normal);
 
-    fragColor = vec4( finalColor * Cfinal, 1.0 );
+    fragColor = vec4( /*finalColor **/ Cfinal, 1.0 );
 
 
     /* DEBUG OUTPUT */
@@ -158,20 +160,21 @@ void main( void )
 
     float depth = texture(shadowMapSampler, shadowMapUVCoords).x;
     if (depth < (z - 0.00001))
-        shadowFactor = 0.5;
+        shadowFactor = 0.1;
     else
         shadowFactor = 1.0;
 
-    fragColor = fragColor;// * shadowFactor;
+//    fragColor = fragColor * shadowFactor;
 
 
-    fragColor = texture(cubeMapSampler, reflect(-normalize(eyePosition - inData.position), normal));
+//    fragColor = texture(cubeMapSampler, reflect(-normalize(eyePosition - inData.position), normal));
 
     normalColor = vec4(normal, 1);
     texcoordColor = vec4(inData.texcoord, 0, 1);
 
-//    normal = normalize(inData.normal);
 
+
+//    normal = normalize(inData.normal);
 
 //    vec4 n = vec4(normal, 1);
 

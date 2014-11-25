@@ -10,36 +10,29 @@
 
 #include <iostream>
 
-struct Color {
-    union {
-        float data[3];
-        struct {
-            float r, g, b;
-        };
-    };
+#include "MathsTools/vec3.h"
 
-    Color& operator=(const aiColor3D& color) {
-        r = color.r;
-        g = color.g;
-        b = color.b;
+#include "texture.h"
 
-        return *this;
-    }
-};
+#include <string>
+
 
 struct Material
 {
-    Color m_ambientReflectance;
-    Color m_diffuseReflectance;
-    Color m_specularReflectance;
+    Color3f m_ambientReflectance;
+    Color3f m_diffuseReflectance;
+    Color3f m_specularReflectance;
 
     float m_specularExponent; // Shininess
+
+    Texture m_diffuseTexture;
+    Texture m_normalTexture;
 
 public:
     Material() {
     }
 
-    bool loadFromAssimpMaterial(const aiMaterial* mat);
+    bool loadFromAssimpMaterial(const aiMaterial* mat, std::string matBaseDir);
 };
 
 #endif // MATERIAL_H

@@ -16,6 +16,12 @@
 
 void RenderLoop(Scene& scene)
 {
+//    Model dummy;
+//    dummy.loadFromFile("SimpleModel/demo.dae");
+
+//    exit(0);
+
+
     FBO fbo(scene.getWindowWidth(), scene.getWindowHeight(), 3);
 
     /* SHADERS */
@@ -42,7 +48,7 @@ void RenderLoop(Scene& scene)
 
     Camera camera;
 
-    camera.setProperties({0.f, 0.f, -1.f}, {0.f, 0.f, 1.f}, {0.f, 1.f, 0.f});
+    camera.setProperties(vec3{0.f, 0.f, -1.f}, vec3{0.f, 0.f, 1.f}, vec3{0.f, 1.f, 0.f});
 
     mat4 projection = mat4::Projection(70, (float) scene.getWindowWidth()/scene.getWindowHeight(), 0.1f, 1000.f);
 
@@ -63,7 +69,9 @@ void RenderLoop(Scene& scene)
 //    plan.loadFromFile("plan.obj");
 //    plan.loadFromFile("cube_and_floor.obj");
 //    plan.loadFromFile("Worn_Down_House/destroyed_house.obj");
-    plan.loadFromFile("hi_sphere.obj");
+//    plan.loadFromFile("hi_sphere.obj");
+//    plan.loadFromFile("Astroboy/astroBoy_walk_Maya.dae");
+    plan.loadFromFile("SimpleModel/demo.dae");
 
     Model basicLamp;
     basicLamp.loadFromFile("hi_sphere.obj");
@@ -267,12 +275,11 @@ void RenderLoop(Scene& scene)
 
         /* Send data to the shader */
         glUniform1i(glGetUniformLocation(s.getProgramId(), "texSampler"), 0); //Texture unit 0 is for base images.
-        glUniform1i(glGetUniformLocation(s.getProgramId(), "dispMapSampler"), 1); //...
-        glUniform1i(glGetUniformLocation(s.getProgramId(), "normalMapSampler"), 2);
+        glUniform1i(glGetUniformLocation(s.getProgramId(), "normalMapSampler"), 1);
+        glUniform1i(glGetUniformLocation(s.getProgramId(), "dispMapSampler"), 2); //...
         glUniform1i(glGetUniformLocation(s.getProgramId(), "shadowMapSampler"), 3);
-        texture.bindToTarget(GL_TEXTURE0);
-        dogeMap.bindToTarget(GL_TEXTURE1);
-        normalMap.bindToTarget(GL_TEXTURE2);
+//        texture.bindToTarget(GL_TEXTURE0);
+        dogeMap.bindToTarget(GL_TEXTURE2);
 
         glUniform1i(glGetUniformLocation(s.getProgramId(), "cubeMapSampler"), 0);
         glActiveTexture(GL_TEXTURE0);
@@ -303,7 +310,7 @@ void RenderLoop(Scene& scene)
 
         shadowmap.bind();
 
-        plan.drawAsPatch();
+        plan.drawAsPatch(lightProjection, lightView, cubeTransformation, &s);
 
         shadowmap.unbind();
 
@@ -315,7 +322,7 @@ void RenderLoop(Scene& scene)
 
         fbo.bind();
 
-        plan.drawAsPatch(&s);
+        plan.drawAsPatch(projection, camera.getView(), cubeTransformation, &s);
 
         Shader::unbind();
 

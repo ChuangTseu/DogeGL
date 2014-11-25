@@ -12,7 +12,7 @@ IF (MSVC)
 
 ELSE(MSVC)
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra") # Warnings
-        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fms-extensions") # features
+        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fms-extensions -g") # features
 ENDIF(MSVC)
 
 
@@ -37,8 +37,6 @@ file(GLOB SHADER_FILES bin_environment/*.frag bin_environment/*.vert bin_environ
 install(DIRECTORY bin_environment/ DESTINATION shaders
           FILES_MATCHING PATTERN "*.frag")
 
-message("SHADER_FILES ${SHADER_FILES}")
-
 add_executable(${PROJECT_NAME} ${SHADER_FILES} ${SRC_LIST})
 
 include_directories(. ${SDL2_INCLUDE_DIR} ${GLEW_INCLUDE_DIR} ${ASSIMP_INCLUDE_DIR} ${DEVIL_INCLUDE_DIR})
@@ -48,7 +46,7 @@ add_subdirectory(Graphics)
 
 target_link_libraries(${PROJECT_NAME} MATHSTOOLS GRAPHICS)
 
-message(${GLEW_LIBRARY})
+message("OPENGL_LIBRARIES ${OPENGL_LIBRARIES}")
 
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARY} ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} ${ASSIMP_LIBRARY} ${DEVIL_LIBRARY})
 

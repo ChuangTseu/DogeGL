@@ -5,7 +5,11 @@
 
 #include "image.h"
 
+#include "MathsTools/vec3.h"
+
 #include <string>
+
+//#include "material.h"
 
 class Texture
 {
@@ -18,10 +22,12 @@ public:
         COLOR, DEPTH
     };
 
-    void bindToTarget(GLuint target);
+    void bindToTarget(GLuint target) const;
 
     bool loadFromFile(std::string filename);
     bool loadEmpty(int width, int height, TargetType type);
+
+    bool loadFromMaterialColor(Color3f matColor);
 
     GLuint getId() const {
         return m_tex;
