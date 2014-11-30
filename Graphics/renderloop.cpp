@@ -68,10 +68,11 @@ void RenderLoop(Scene& scene)
 //    plan.loadBasicType(Model::BasicType::PLAN);
 //    plan.loadFromFile("plan.obj");
 //    plan.loadFromFile("cube_and_floor.obj");
-    plan.loadFromFile("Worn_Down_House/destroyed_house.obj");
+//    plan.loadFromFile("Worn_Down_House/destroyed_house.obj");
 //    plan.loadFromFile("hi_sphere.obj");
 //    plan.loadFromFile("Astroboy/astroBoy_walk_Maya.dae");
 //    plan.loadFromFile("SimpleModel/demo.dae");
+    plan.loadFromFile("cubenorm.obj");
 
     Model basicLamp;
     basicLamp.loadFromFile("hi_sphere.obj");
@@ -301,6 +302,9 @@ void RenderLoop(Scene& scene)
 
 
         /* SHADOW PASS */
+        glPolygonOffset(1.1f, 4.0f);
+        glEnable(GL_POLYGON_OFFSET_FILL);
+
         mat4 lightProjection = mat4::Projection(70, 1.f, 0.1f, 1000.f);
         mat4 lightView = mat4::LookAt(vec3{15.f, 15.f, 15.f}, vec3{0, 0, 0}, vec3{0, 1, 0});
 
@@ -313,6 +317,8 @@ void RenderLoop(Scene& scene)
         plan.drawAsPatch(lightProjection, lightView, cubeTransformation, &s);
 
         shadowmap.unbind();
+
+        glDisable(GL_POLYGON_OFFSET_FILL);
 
         /* FIRE! */
         s.sendTransformations(projection, camera.getView(), cubeTransformation);

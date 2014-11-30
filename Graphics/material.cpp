@@ -72,7 +72,18 @@ bool Material::loadFromAssimpMaterial(const aiMaterial *mat, std::string matBase
         }
     }
     else {
-        m_normalTexture.loadFromMaterialColor(Color3f{0.5f, 0.5f, 1.f});
+        // WARNING, TEMPORARY HACK FOR OBJ FILES WITH BUMP MAPS. ASSIMP BUG :(
+        if (mat->GetTextureCount(aiTextureType_HEIGHT) > 0) {
+            aiString texPath;
+
+            if (mat->GetTexture(aiTextureType_HEIGHT, 0, &texPath, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
+                m_normalTexture.loadFromFile(matBaseDir + '/' + texPath.data);
+            }
+        }
+        else {
+            m_normalTexture.loadFromMaterialColor(Color3f{0.5f, 0.5f, 1.f});
+        }
+
     }
 
     TEXTEST(aiTextureType_NONE );
