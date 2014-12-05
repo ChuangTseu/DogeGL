@@ -26,9 +26,22 @@ find_package(assimp REQUIRED) # assimp
 
 find_package(DevIL REQUIRED) # DevIL
 
+
 IF(WIN32)
     add_definitions(-DWIN32)
 ENDIF(WIN32)
+
+IF(NOT DOGEGL_WINDOW_MANAGER)
+    set(DOGEGL_WINDOW_MANAGER QT)
+ENDIF()
+
+IF(DOGEGL_WINDOW_MANAGER STREQUAL "SDL2")
+    add_definitions(-DUSE_SDL2)
+ELSEIF(DOGEGL_WINDOW_MANAGER STREQUAL "QT")
+    add_definitions(-DUSE_QT)
+ELSE()
+    error("${DOGEGL_WINDOW_MANAGER} not available")
+ENDIF()
 
 
 file(GLOB SHADER_FILES bin_environment/*.frag bin_environment/*.vert bin_environment/*.glsl
@@ -43,10 +56,13 @@ include_directories(. ${SDL2_INCLUDE_DIR} ${GLEW_INCLUDE_DIR} ${ASSIMP_INCLUDE_D
 
 add_subdirectory(MathsTools)
 add_subdirectory(Graphics)
+add_subdirectory(QtGUI)
 
-target_link_libraries(${PROJECT_NAME} MATHSTOOLS GRAPHICS)
+target_link_libraries(${PROJECT_NAME} MATHSTOOLS GRAPHICS QtGUI)
 
 message("OPENGL_LIBRARIES ${OPENGL_LIBRARIES}")
 
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARY} ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} ${ASSIMP_LIBRARY} ${DEVIL_LIBRARY})
+
+target_link_libraries(${PROJECT_NAME})
 

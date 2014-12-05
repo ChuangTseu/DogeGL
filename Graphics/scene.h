@@ -1,54 +1,74 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include <string>
-#include <SDL.h>
-#include <iostream>
-#include <string>
-#include "GL.h"
-
+#include "orthobase.h"
+#include "texture.h"
+#include "light.h"
 #include "shader.h"
 #include "camera.h"
-#include "model.h"
+#include "fbo.h"
+#include "cubemap.h"
+#include "skybox.h"
+#include "shadowmap.h"
+
+#include "MathsTools/mat4.h"
+#include "MathsTools/vec3.h"
 
 class Scene
-{    
-    std::string m_windowTitle = "FirstWindow";
-    int m_windowWidth;
-    int m_windowHeight;
-    int m_type;
-
-    SDL_Window* m_window;
-    SDL_GLContext m_openGLContext;
-
+{
 public:
-    Scene(int width, int height, int type = WINDOWED);
+    Scene(int width, int height);
 
-    enum {
-        FULLSCREEN, WINDOWED
-    };
+    void initScene();
 
-    bool initWindow();
-    bool initGL();
-    void mainLoop();
+    void render();
+private:
+    int m_width;
+    int m_height;
 
-    int getWindowWidth() const {
-        return m_windowWidth;
-    }
+    FBO fbo{m_width, m_height, 3};
 
-    int getWindowHeight() const {
-        return m_windowHeight;
-    }
+    /* SHADERS */
+    Shader s;
 
-    SDL_Window* getSDL_Window() {
-        return m_window;
-    }
+    Shader quadFboShader;
 
-    std::string getWindowTitle() const {
-        return m_windowTitle;
-    }
+    Mesh quadFbo;
 
-    bool bob();
+    Camera camera;
+
+    mat4 projection = mat4::Projection(70, (float) m_width/m_height, 0.1f, 1000.f);
+
+    vec3 up = vec3{0, 1, 0};
+    vec3 position = vec3{5.f, 5.f, 5.f};
+    vec3 forward = normalize(vec3{0, 0, 0} - position);
+
+    Model plan;
+
+
+    Model basicLamp;
+    Shader basicLampShader;
+
+
+    OrthoBase base;
+
+    Texture texture;
+    Texture normalMap;
+    Texture dogeMap;
+
+    Cubemap cubemap;
+
+    Skybox skybox;
+
+    Shadowmap shadowmap{1024, 1024};
+
+    float theta = 0;
+
+    float userDisplacementFactor = 0.f;
+
+    bool wireframe = false;
+
+    int fboTexId = 0;
 };
 
-#endif // SCENE_H
+#endif // SCENETORENAME_H

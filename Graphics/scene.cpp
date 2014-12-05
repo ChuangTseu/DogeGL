@@ -1,307 +1,220 @@
 #include "scene.h"
 
-Scene::Scene(int width, int height, int type) : m_windowWidth(width),
-    m_windowHeight(height),
-    m_type(type)
+Scene::Scene(int width, int height) :
+    m_width(width),
+    m_height(height)
 {
 }
 
-bool Scene::initWindow() {
-    if(SDL_Init(SDL_INIT_VIDEO) < 0)
-    {
-        std::cout << "Erreur lors de l'initialisation de la SDL : " << SDL_GetError() << std::endl;
-        SDL_Quit();
+void Scene::initScene() {
+    s.addVertexShader("simple.vert");
+    s.addFragmentShader("simple.frag");
+    s.addTessControlShader("simple_tesc.glsl");
+    s.addTessEvaluationShader("simple_tese.glsl");
+    s.addGeometryShader("simple.geom");
+    s.link();
 
-        return false;
-    }
 
-    // OpenGL version
+    quadFboShader.addFragmentShader("quadFbo.frag");
+    quadFboShader.link();
 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    //SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+    quadFbo.loadFullscreenQuad();
 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 
-    // Double Buffer
+    camera.setProperties(vec3{0.f, 0.f, -1.f}, vec3{0.f, 0.f, 1.f}, vec3{0.f, 1.f, 0.f});
 
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+//    plan.loadBasicType(Model::BasicType::PLAN);
+//    plan.loadFromFile("plan.obj");
+//    plan.loadFromFile("cube_and_floor.obj");
+//    plan.loadFromFile("Worn_Down_House/destroyed_house.obj");
+//    plan.loadFromFile("hi_sphere.obj");
+//    plan.loadFromFile("Astroboy/astroBoy_walk_Maya.dae");
+//    plan.loadFromFile("SimpleModel/demo.dae");
+    plan.loadFromFile("cubenorm.obj");
 
-    // Window
 
-    Uint32 windowAttributesFlags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+    basicLamp.loadFromFile("hi_sphere.obj");
 
-    if (m_type == FULLSCREEN) {
-        windowAttributesFlags |= SDL_WINDOW_FULLSCREEN;
-    }
+    basicLampShader.addVertexShader("line.vert");
+    basicLampShader.addFragmentShader("line.frag");
+    basicLampShader.link();
 
-    m_window = SDL_CreateWindow(m_windowTitle.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                                m_windowWidth, m_windowHeight, windowAttributesFlags);
 
-    if(!m_window)
-    {
-        std::cout << "SDL Error : " << SDL_GetError() << std::endl;
-        return false;
-    }
+//    texture.loadFromFile("roundstones.jpg"); // EXAMPLE
+    texture.loadFromFile("disp_data/wall002_512x512.jpg");
 
-    //OpenGL context
+//    normalMap.loadFromFile("roundstones_norm.jpg");// EXAMPLE
+    normalMap.loadFromFile("disp_data/wall002_nmap2_512x512.jpg");
 
-    m_openGLContext = SDL_GL_CreateContext(m_window);
+//    dogeMap.loadFromFile("basic_displacement_map.png");
+    dogeMap.loadFromFile("disp_data/wall002_hmap2_512x512.jpg");
 
-    if(m_openGLContext == 0)
-    {
-        std::cout << SDL_GetError() << std::endl;
-        SDL_DestroyWindow(m_window);
-        SDL_Quit();
 
-        return false;
-    }
+    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_X, "Ryfjallet_512_y_flipped/posx.jpg");
+    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_X, "Ryfjallet_512_y_flipped/negx.jpg");
+    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_Y, "Ryfjallet_512_y_flipped/posy.jpg");
+    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_Y, "Ryfjallet_512_y_flipped/negy.jpg");
+    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_Z, "Ryfjallet_512_y_flipped/posz.jpg");
+    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_Z, "Ryfjallet_512_y_flipped/negz.jpg");
 
-    return true;
+    skybox.feedCubemap(cubemap);
 }
 
-void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length,
-                     const GLchar * message, const void * userParam) {
-    (void) source;
-    (void) type;
-    (void) id;
-    (void) severity;
-    (void) length;
-    (void) message;
-    (void) userParam;
-
-    std::cerr << "Error\n";
-    return;
-}
-
-static void glBreak_print_source(GLenum source)
+void Scene::render()
 {
-    switch (source)
+    /* DA MAIN LOOP*/
+
     {
-        case GL_DEBUG_SOURCE_API:
-        {
-            fputs("GL_DEBUG_SOURCE_API", stderr);
-        }
-        break;
+//        glEnable(44);
 
-        case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
-        {
-            fputs("GL_DEBUG_SOURCE_WINDOW_SYSTEM", stderr);
-        }
-        break;
+        //Bed
 
-        case GL_DEBUG_SOURCE_SHADER_COMPILER:
-        {
-            fputs("GL_DEBUG_SOURCE_SHADER_COMPILER", stderr);
-        }
-        break;
+        theta += 0.01f;
+//        A += 0.03;
 
-        case GL_DEBUG_SOURCE_THIRD_PARTY:
-        {
-            fputs("GL_DEBUG_SOURCE_THIRD_PARTY", stderr);
-        }
-        break;
+        float x = cosf(theta);
+        float z = -sinf(theta);
 
-        case GL_DEBUG_SOURCE_APPLICATION:
-        {
-            fputs("GL_DEBUG_SOURCE_APPLICATION", stderr);
-        }
-        break;
+        //position = {A*x, 5.f*sin(theta*3.f), A*z};
 
-        case GL_DEBUG_SOURCE_OTHER:
-        {
-            fputs("GL_DEBUG_SOURCE_APPLICATION", stderr);
-        }
-        break;
+
+        forward.normalize();
+
+        camera.lookAt(position, position + forward, up);
+
+        /* AT LAST: DA RENDERING */
+
+
+        /* Do your model transformations */
+        mat4 cubeTransformation = mat4::Identity();
+//        cubeTransformation.translate(5,0,0);
+//        cubeTransformation.rotate(normalize({0.f, 0.f, 1.f}), -90.f);
+
+        /* Get your lights ready */
+        DirLight dirLight{vec3{1, 1, 1}, vec3{0, -1, -1}};
+        PointLight pointLight{vec3{0, 1, 0}, vec3{x*10, 0, z*10}};
+
+
+        fbo.bind();
+
+        GLuint attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+        glDrawBuffers(3,  attachments);
+
+
+        glClearColor(0.f, 0.f, 0.f, 0); // BLACK
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+        skybox.render(projection, camera.getPureViewNoTranslation());
+//        skybox.render(projection, camera.getView());
+
+        FBO::unbind();
+
+
+        /* Bind a shader */
+        s.use();
+
+        /* Send data to the shader */
+        glUniform1i(glGetUniformLocation(s.getProgramId(), "texSampler"), 0); //Texture unit 0 is for base images.
+        glUniform1i(glGetUniformLocation(s.getProgramId(), "normalMapSampler"), 1);
+        glUniform1i(glGetUniformLocation(s.getProgramId(), "dispMapSampler"), 2); //...
+        glUniform1i(glGetUniformLocation(s.getProgramId(), "shadowMapSampler"), 3);
+//        texture.bindToTarget(GL_TEXTURE0);
+        dogeMap.bindToTarget(GL_TEXTURE2);
+
+        glUniform1i(glGetUniformLocation(s.getProgramId(), "cubeMapSampler"), 0);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap.getId());
+
+
+        glUniform3fv(glGetUniformLocation(s.getProgramId(), "dirLight.direction"), 1, dirLight.m_direction.data());
+        glUniform3fv(glGetUniformLocation(s.getProgramId(), "dirLight.color"), 1, dirLight.m_color.data());
+
+        glUniform3fv(glGetUniformLocation(s.getProgramId(), "pointLight.position"), 1, pointLight.m_position.data());
+        glUniform3fv(glGetUniformLocation(s.getProgramId(), "pointLight.color"), 1, pointLight.m_color.data());
+
+        glUniform3fv(glGetUniformLocation(s.getProgramId(), "eyePosition"), 1, position.data());
+
+
+        glUniform1f(glGetUniformLocation(s.getProgramId(), "userDisplacementFactor"), userDisplacementFactor);
+        glUniform1i(glGetUniformLocation(s.getProgramId(), "wireframe"), wireframe);
+
+
+
+        /* SHADOW PASS */
+        glPolygonOffset(1.1f, 4.0f);
+        glEnable(GL_POLYGON_OFFSET_FILL);
+
+        mat4 lightProjection = mat4::Projection(70, 1.f, 0.1f, 1000.f);
+        mat4 lightView = mat4::LookAt(vec3{15.f, 15.f, 15.f}, vec3{0, 0, 0}, vec3{0, 1, 0});
+
+        mat4 lightMVP = lightProjection * lightView;
+
+        s.sendTransformations(lightProjection, lightView, cubeTransformation);
+
+        shadowmap.bind();
+
+        plan.drawAsPatch(lightProjection, lightView, cubeTransformation, &s);
+
+        shadowmap.unbind();
+
+        glDisable(GL_POLYGON_OFFSET_FILL);
+
+        /* FIRE! */
+        s.sendTransformations(projection, camera.getView(), cubeTransformation);
+        glUniformMatrix4fv(glGetUniformLocation(s.getProgramId(), "lightMVP"), 1, GL_FALSE, lightMVP.data());
+
+        shadowmap.bindShadowMapToTarget(GL_TEXTURE3);
+
+        fbo.bind();
+
+        plan.drawAsPatch(projection, camera.getView(), cubeTransformation, &s);
+
+        Shader::unbind();
+
+
+        mat4 lampTransformation = mat4::Identity();
+
+        lampTransformation.translate(pointLight.m_position);
+
+        basicLampShader.use();
+        basicLampShader.sendTransformations(projection, camera.getView(), lampTransformation);
+        glUniform1i(glGetUniformLocation(basicLampShader.getProgramId(), "overrideColor"), true);
+        glUniform3fv(glGetUniformLocation(basicLampShader.getProgramId(), "userColor"), 1, pointLight.m_color.data());
+
+        basicLamp.drawAsTriangles();
+
+        Shader::unbind();
+
+        /* And so on for every other model... */
+        /* Currently handmade, for developing/testing purposes */
+        /* Will hopefully become moar professional in the near future */
+
+
+        base.draw(projection, camera.getView());
+
+        FBO::unbind();
+
+        glClearColor(0.f, 0.f, 0.f, 0); // BLACK
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        quadFboShader.use();
+        glUniform1i(glGetUniformLocation(quadFboShader.getProgramId(), "screenWidth"), m_width);
+        glUniform1i(glGetUniformLocation(quadFboShader.getProgramId(), "screenHeight"), m_height);
+
+        fbo.getTexture(fboTexId).bindToTarget(GL_TEXTURE0);
+//        shadowFbo.getTexture(0).bindToTarget(GL_TEXTURE0);
+
+        quadFbo.draw();
+
+        Shader::unbind();
+
+
+        /* SWAP BUFFERS */
+//        SDL_GL_SwapWindow(scene.getSDL_Window());
+
+
+        /* ARBITRARILY LIMIT THE FRAMERATE, WE DON'T NEED OUR GPU TO CRY RENDERING A DUMB CUBE */
+//        SDL_Delay(8);
     }
-}
-
-static void glBreak_print_type(GLenum type)
-{
-    switch (type)
-    {
-        case GL_DEBUG_TYPE_ERROR:
-        {
-            fputs("GL_DEBUG_TYPE_ERROR", stderr);
-        }
-        break;
-
-        case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-        {
-            fputs("GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR", stderr);
-        }
-        break;
-
-        case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-        {
-            fputs("GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR", stderr);
-        }
-        break;
-
-        case GL_DEBUG_TYPE_PORTABILITY:
-        {
-            fputs("GL_DEBUG_TYPE_PORTABILITY", stderr);
-        }
-        break;
-
-        case GL_DEBUG_TYPE_PERFORMANCE:
-        {
-            fputs("GL_DEBUG_TYPE_PERFORMANCE", stderr);
-        }
-        break;
-
-        case GL_DEBUG_TYPE_MARKER:
-        {
-            fputs("GL_DEBUG_TYPE_MARKER", stderr);
-        }
-        break;
-
-        case GL_DEBUG_TYPE_PUSH_GROUP:
-        {
-            fputs("GL_DEBUG_TYPE_PUSH_GROUP", stderr);
-        }
-        break;
-
-        case GL_DEBUG_TYPE_POP_GROUP:
-        {
-            fputs("GL_DEBUG_TYPE_POP_GROUP", stderr);
-        }
-        break;
-
-        case GL_DEBUG_TYPE_OTHER:
-        {
-            fputs("GL_DEBUG_TYPE_OTHER", stderr);
-        }
-        break;
-    }
-}
-
-static void glBreak_print_severity(GLenum severity)
-{
-    switch (severity)
-    {
-        case GL_DEBUG_SEVERITY_LOW:
-        {
-            fputs("GL_DEBUG_SEVERITY_LOW", stderr);
-        }
-        break;
-
-        case GL_DEBUG_SEVERITY_MEDIUM:
-        {
-            fputs("GL_DEBUG_SEVERITY_MEDIUM", stderr);
-        }
-        break;
-
-        case GL_DEBUG_SEVERITY_HIGH:
-        {
-            fputs("GL_DEBUG_SEVERITY_HIGH", stderr);
-        }
-        break;
-    }
-}
-
-/**
- * @brief glBreak_debug
- * @param source
- * @param type
- * @param id
- * @param severity
- * @param length
- * @param message
- * @param userParam
- */
-void GLAPIENTRY glBreak_debug(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * message, const void * userParam)
-{
-    (void) id;
-    (void) length;
-    (void) userParam;
-
-    fputs("---- GL BREAKPOINT ----\n", stderr);
-
-    fputs("Source : ", stderr);
-    glBreak_print_source(source);
-
-    fputs("\n", stderr);
-
-    fputs("Type : ", stderr);
-    glBreak_print_type(type);
-
-    fputs("\n", stderr);
-
-    fputs("Severity : ", stderr);
-    glBreak_print_severity(severity);
-
-    fputs("\n", stderr);
-
-    fputs("Message : ", stderr);
-    fputs(message, stderr);
-
-    fputs("-----------------------\n", stderr);
-
-    if (GL_DEBUG_TYPE_ERROR == type)
-    {
-        asm("int3");
-    }
-}
-
-bool Scene::initGL()
-{
-    std::cout << "OpenGL Version : " << glGetString(GL_VERSION) << std::endl;
-    std::cout << "OpenGL Vendor : " << glGetString(GL_VENDOR) << std::endl;
-
-
-    // EVERYONE ON EVERY PLATFORM WILL ENJOY THIS
-//    #ifdef WIN32
-
-    // On initialise GLEW
-
-    /*Potentiel fix pour le crash quand SDL contexte > OpenGL 3.1 + GLEW*/
-    glewExperimental = GL_TRUE;
-
-    GLenum GLEWinitialization( glewInit() );
-
-    std::cerr << "Initializing GLEW...\n";
-
-    if(GLEWinitialization != GLEW_OK)
-    {
-        // On affiche l'erreur gr�ce � la fonction : glewGetErrorString(GLenum code)
-
-        std::cout << "Erreur d'initialisation de GLEW : " << glewGetErrorString(GLEWinitialization) << std::endl;
-
-
-        // On quitte la SDL
-
-        SDL_GL_DeleteContext(m_openGLContext);
-        SDL_DestroyWindow(m_window);
-        SDL_Quit();
-
-        return false;
-    }
-
-    if (GLEW_ARB_debug_output)
-    {
-//        glDebugMessageCallbackARB(&glBreak_debug, nullptr);
-    }
-
-
-//    #endif
-
-    // Activation du Depth Buffer
-
-    glEnable(GL_DEPTH_TEST);
-
-    /*glFrontFace(GL_CCW);
-    glCullFace(GL_BACK);
-    glEnable(GL_CULL_FACE);*/
-
-    return true;
-}
-
-#include "renderloop.h"
-
-void Scene::mainLoop()
-{
-    RenderLoop(*this);
 }
