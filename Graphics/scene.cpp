@@ -23,15 +23,14 @@ void Scene::initScene() {
 
     camera.setProperties(vec3{0.f, 0.f, -1.f}, vec3{0.f, 0.f, 1.f}, vec3{0.f, 1.f, 0.f});
 
-//    plan.loadBasicType(Model::BasicType::PLAN);
-//    plan.loadFromFile("plan.obj");
-//    plan.loadFromFile("cube_and_floor.obj");
-//    plan.loadFromFile("Worn_Down_House/destroyed_house.obj");
-//    plan.loadFromFile("hi_sphere.obj");
-//    plan.loadFromFile("Astroboy/astroBoy_walk_Maya.dae");
-//    plan.loadFromFile("SimpleModel/demo.dae");
-    plan.loadFromFile("cubenorm.obj");
-
+//    mainModel.loadBasicType(Model::BasicType::PLAN);
+//    mainModel.loadFromFile("plan.obj");
+//    mainModel.loadFromFile("cube_and_floor.obj");
+//    mainModel.loadFromFile("Worn_Down_House/destroyed_house.obj");
+//    mainModel.loadFromFile("hi_sphere.obj");
+//    mainModel.loadFromFile("Astroboy/astroBoy_walk_Maya.dae");
+//    mainModel.loadFromFile("SimpleModel/demo.dae");
+    mainModel.loadFromFile("cubenorm.obj");
 
     basicLamp.loadFromFile("hi_sphere.obj");
 
@@ -154,7 +153,7 @@ void Scene::render()
 
         shadowmap.bind();
 
-        plan.drawAsPatch(lightProjection, lightView, cubeTransformation, &s);
+        mainModel.drawAsPatch(lightProjection, lightView, cubeTransformation, &s);
 
         shadowmap.unbind();
 
@@ -168,7 +167,7 @@ void Scene::render()
 
         fbo.bind();
 
-        plan.drawAsPatch(projection, camera.getView(), cubeTransformation, &s);
+        mainModel.drawAsPatch(projection, camera.getView(), cubeTransformation, &s);
 
         Shader::unbind();
 

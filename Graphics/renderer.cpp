@@ -39,6 +39,11 @@ void Renderer::paintGL(void) {
     render();
 }
 
+void Renderer::loadModel(const std::string &filename)
+{
+    m_scene->mainModel.loadFromFile(filename);
+}
+
 bool Renderer::initGL()
 {
     std::cerr << "OpenGL Version : " << glGetString(GL_VERSION) << std::endl;

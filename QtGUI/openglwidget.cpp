@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include <QTimer>
+#include <QFileDialog>
 
 OpenGLWidget::OpenGLWidget(QWidget *parent) :
     QGLWidget(parent)
@@ -66,4 +67,13 @@ void OpenGLWidget::mouseReleaseEvent(QMouseEvent* event) {
 
 void OpenGLWidget::wheelEvent(QWheelEvent* event) {
 
+}
+
+void OpenGLWidget::loadModel()
+{
+    std::cerr << "Loading model... \n";
+
+    QString filename = QFileDialog::getOpenFileName();
+
+    m_renderer->loadModel(filename.toStdString());
 }

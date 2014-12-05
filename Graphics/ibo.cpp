@@ -5,6 +5,11 @@ IBO::IBO()
     glGenBuffers(1, &m_iboId);
 }
 
+IBO::~IBO()
+{
+    glDeleteBuffers(1, &m_iboId);
+}
+
 void IBO::submitData(GLuint* indices_data, size_t size) {
     bind();
 
@@ -17,4 +22,8 @@ void IBO::submitData(GLuint* indices_data, size_t size) {
 
 void IBO::bind() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_iboId);
+}
+
+void IBO::unbind() {
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }

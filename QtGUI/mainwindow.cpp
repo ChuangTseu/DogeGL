@@ -23,3 +23,8 @@ MainWindow::~MainWindow()
 void MainWindow::setRenderer(RendererInterface *renderer) {
     m_oglWidget->setRenderer(renderer);
 }
+
+void MainWindow::loadModel()
+{
+    m_oglWidget->loadModel();
+}

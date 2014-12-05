@@ -35,6 +35,7 @@ protected:
 signals:
 
 public slots:
+    void loadModel();
 
 private:
     RendererInterface* m_renderer;

@@ -23,6 +23,7 @@ public:
 signals:
 
 public slots:
+    void loadModel();
 
 private:
     Ui::MainWindow *ui;

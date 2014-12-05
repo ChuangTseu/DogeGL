@@ -159,6 +159,8 @@ bool Model::loadFromFile(const std::string& filename)
         return false;
     }    
 
+    m_nodes.clear();
+
     aiNode* rootNode = scene->mRootNode;
 
     handleNode(rootNode, aiMatrix4x4());
@@ -215,14 +217,14 @@ bool Model::loadFromFile(const std::string& filename)
     return true;
 }
 
-void Model::draw(Shader *s) const {
+void Model::draw(Shader *s) {
     drawAsTriangles(s);
 }
 
-void Model::drawAsPatch(Shader *s) const {
+void Model::drawAsPatch(Shader *s) {
     for (const ModelNode& node : m_nodes) {
         for (unsigned int meshIndex : node.m_meshIndices) {
-            const Mesh& mesh = m_meshes[meshIndex];
+            Mesh& mesh = m_meshes[meshIndex];
 
             if (s) {
                 s->sendMaterial(m_materials[mesh.m_materialIndex]);
@@ -232,10 +234,10 @@ void Model::drawAsPatch(Shader *s) const {
     }
 }
 
-void Model::drawAsTriangles(Shader *s) const {
+void Model::drawAsTriangles(Shader *s) {
     for (const ModelNode& node : m_nodes) {
         for (unsigned int meshIndex : node.m_meshIndices) {
-            const Mesh& mesh = m_meshes[meshIndex];
+            Mesh& mesh = m_meshes[meshIndex];
 
             if (s) {
                 s->sendMaterial(m_materials[mesh.m_materialIndex]);
@@ -253,14 +255,14 @@ void Model::drawAsTriangles(Shader *s) const {
 }
 
 
-void Model::draw(const mat4 &projection, const mat4 &view, const mat4 &model, Shader *s) const {
+void Model::draw(const mat4 &projection, const mat4 &view, const mat4 &model, Shader *s) {
     drawAsTriangles(projection, view, model, s);
 }
 
-void Model::drawAsPatch(const mat4 &projection, const mat4 &view, const mat4 &model, Shader *s) const {
+void Model::drawAsPatch(const mat4 &projection, const mat4 &view, const mat4 &model, Shader *s) {
     for (const ModelNode& node : m_nodes) {
         for (unsigned int meshIndex : node.m_meshIndices) {
-            const Mesh& mesh = m_meshes[meshIndex];
+            Mesh& mesh = m_meshes[meshIndex];
 
             if (s) {
                 s->sendMaterial(m_materials[mesh.m_materialIndex]);
@@ -272,10 +274,10 @@ void Model::drawAsPatch(const mat4 &projection, const mat4 &view, const mat4 &mo
     }
 }
 
-void Model::drawAsTriangles(const mat4 &projection, const mat4 &view, const mat4 &model, Shader *s) const {
+void Model::drawAsTriangles(const mat4 &projection, const mat4 &view, const mat4 &model, Shader *s) {
     for (const ModelNode& node : m_nodes) {
         for (unsigned int meshIndex : node.m_meshIndices) {
-            const Mesh& mesh = m_meshes[meshIndex];
+            Mesh& mesh = m_meshes[meshIndex];
 
             if (s) {
                 s->sendMaterial(m_materials[mesh.m_materialIndex]);

@@ -22,7 +22,8 @@ public:
     void initScene();
 
     void render();
-private:
+
+public:
     int m_width;
     int m_height;
 
@@ -43,7 +44,7 @@ private:
     vec3 position = vec3{5.f, 5.f, 5.f};
     vec3 forward = normalize(vec3{0, 0, 0} - position);
 
-    Model plan;
+    Model mainModel;
 
 
     Model basicLamp;

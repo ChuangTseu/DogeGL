@@ -9,13 +9,13 @@ class IBO
 public:
     IBO();
 
+    ~IBO();
+
     void submitData(GLuint* indices_data, size_t size);
 
     void bind();
 
-    static void unbind() {
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    }
+    static void unbind();
 };
 
 #endif // IBO_H

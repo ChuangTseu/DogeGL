@@ -5,6 +5,8 @@
 
 #include "scene.h"
 
+#include <string>
+
 class Renderer : public RendererInterface
 {
 public:
@@ -13,6 +15,8 @@ public:
     virtual void initializeGL(void);
     virtual void resizeGL(int width, int height);
     virtual void paintGL(void);
+
+    virtual void loadModel(const std::string &filename);
 
     bool initGL();
     void initScene();
