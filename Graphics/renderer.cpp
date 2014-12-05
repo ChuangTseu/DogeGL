@@ -25,6 +25,8 @@ Renderer::Renderer(int width, int height) :
 void Renderer::initializeGL(void) {
     initGL();
 
+    glViewport(0, 0, m_width, m_height);
+
     m_scene = new Scene(m_width, m_height);
     m_scene->initScene();
 }

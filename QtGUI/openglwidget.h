@@ -7,6 +7,8 @@
 
 class Renderer;
 
+class QTimer;
+
 class OpenGLWidget : public QGLWidget
 {
     Q_OBJECT
@@ -36,6 +38,8 @@ public slots:
 
 private:
     RendererInterface* m_renderer;
+
+    QTimer* m_realTimeTimer;
 };
 
 #endif // OPENGLWIDGET_H

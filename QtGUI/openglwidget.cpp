@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include <QTimer>
+
 OpenGLWidget::OpenGLWidget(QWidget *parent) :
     QGLWidget(parent)
 {
@@ -33,6 +35,13 @@ OpenGLWidget::~OpenGLWidget(void)
 
 void OpenGLWidget::initializeGL(void) {
     m_renderer->initializeGL();
+
+    m_realTimeTimer = new QTimer(this);
+    m_realTimeTimer->setInterval(8);
+
+    connect(m_realTimeTimer, SIGNAL(timeout()), this, SLOT(update()));
+
+    m_realTimeTimer->start();
 }
 
 void OpenGLWidget::resizeGL(int width, int height) {
