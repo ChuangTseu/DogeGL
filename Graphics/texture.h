@@ -18,6 +18,8 @@ class Texture
 public:
     Texture();
 
+    ~Texture();
+
     enum class TargetType {
         COLOR, DEPTH
     };

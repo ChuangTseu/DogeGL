@@ -14,6 +14,8 @@
 #include "MathsTools/mat4.h"
 #include "MathsTools/vec3.h"
 
+#include <memory>
+
 class Scene
 {
 public:
@@ -21,13 +23,15 @@ public:
 
     void initScene();
 
+    void resize(int width, int height);
+
     void render();
 
 public:
     int m_width;
     int m_height;
 
-    FBO fbo{m_width, m_height, 3};
+    std::unique_ptr<FBO> fbo{nullptr};
 
     /* SHADERS */
     Shader s;
@@ -38,7 +42,7 @@ public:
 
     Camera camera;
 
-    mat4 projection = mat4::Projection(70, (float) m_width/m_height, 0.1f, 1000.f);
+    mat4 projection = mat4::Projection(70, (float) m_width / (float) m_height, 0.1f, 1000.f);
 
     vec3 up = vec3{0, 1, 0};
     vec3 position = vec3{5.f, 5.f, 5.f};

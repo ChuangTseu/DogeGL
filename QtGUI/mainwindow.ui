@@ -29,7 +29,14 @@
     </property>
     <addaction name="actionModelLoad"/>
    </widget>
+   <widget class="QMenu" name="menuShader">
+    <property name="title">
+     <string>Shader</string>
+    </property>
+    <addaction name="actionReloadShader"/>
+   </widget>
    <addaction name="menuModel"/>
+   <addaction name="menuShader"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionModelLoad">
@@ -38,6 +45,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionReloadShader">
+   <property name="text">
+    <string>Reload</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
    </property>
   </action>
  </widget>
@@ -60,8 +75,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionReloadShader</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>reloadShader()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>319</x>
+     <y>239</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>loadModel()</slot>
+  <slot>reloadShader()</slot>
  </slots>
 </ui>

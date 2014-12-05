@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include <QtCore/qnamespace.h>
+
 class RendererInterface
 {
 public:
@@ -15,6 +17,10 @@ public:
     virtual void paintGL(void) = 0;
 
     virtual void loadModel(const std::string& filename) = 0;
+
+    virtual void onKeyPress(int qt_key) = 0;
+
+    virtual void reloadShader() = 0;
 };
 
 #endif // RENDERERINTERFACE_H

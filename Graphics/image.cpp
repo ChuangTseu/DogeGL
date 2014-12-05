@@ -8,6 +8,8 @@ Image::Image()
 
 Image::~Image() {
     ilDeleteImage(m_imageId);
+
+//    delete m_data;
 }
 
 bool Image::loadFromFile(std::string filename)

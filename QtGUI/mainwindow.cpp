@@ -28,3 +28,8 @@ void MainWindow::loadModel()
 {
     m_oglWidget->loadModel();
 }
+
+void MainWindow::reloadShader()
+{
+    m_oglWidget->reloadShader();
+}

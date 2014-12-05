@@ -32,10 +32,14 @@ protected:
 
     void wheelEvent(QWheelEvent* event);
 
+    void keyPressEvent(QKeyEvent* event);
+
 signals:
 
 public slots:
     void loadModel();
+
+    void reloadShader();
 
 private:
     RendererInterface* m_renderer;

@@ -18,6 +18,10 @@ public:
 
     virtual void loadModel(const std::string &filename);
 
+    virtual void onKeyPress(int qt_key);
+
+    virtual void reloadShader();
+
     bool initGL();
     void initScene();
 

@@ -25,6 +25,8 @@ signals:
 public slots:
     void loadModel();
 
+    void reloadShader();
+
 private:
     Ui::MainWindow *ui;
 

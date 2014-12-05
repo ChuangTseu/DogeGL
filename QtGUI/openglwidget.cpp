@@ -4,6 +4,7 @@
 
 #include <QTimer>
 #include <QFileDialog>
+#include <QKeyEvent>
 
 OpenGLWidget::OpenGLWidget(QWidget *parent) :
     QGLWidget(parent)
@@ -46,7 +47,7 @@ void OpenGLWidget::initializeGL(void) {
 }
 
 void OpenGLWidget::resizeGL(int width, int height) {
-
+    m_renderer->resizeGL(width, height);
 }
 
 void OpenGLWidget::paintGL(void) {
@@ -69,6 +70,11 @@ void OpenGLWidget::wheelEvent(QWheelEvent* event) {
 
 }
 
+void OpenGLWidget::keyPressEvent(QKeyEvent* event)
+{
+    m_renderer->onKeyPress(event->key());
+}
+
 void OpenGLWidget::loadModel()
 {
     std::cerr << "Loading model... \n";
@@ -76,4 +82,9 @@ void OpenGLWidget::loadModel()
     QString filename = QFileDialog::getOpenFileName();
 
     m_renderer->loadModel(filename.toStdString());
+}
+
+void OpenGLWidget::reloadShader()
+{
+    m_renderer->reloadShader();
 }

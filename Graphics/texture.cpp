@@ -7,6 +7,11 @@ Texture::Texture()
     glGenTextures(1, &m_tex);
 }
 
+Texture::~Texture()
+{
+    glDeleteTextures(1, &m_tex);
+}
+
 void Texture::bindToTarget(GLuint target) const
 {
     glActiveTexture(target);
