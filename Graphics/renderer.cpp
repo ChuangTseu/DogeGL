@@ -80,24 +80,24 @@ void Renderer::onKeyPress(int qt_key)
         m_scene->userDisplacementFactor -= 0.005f;
     }
 
-    if (qt_key == Qt::Key_W) {
-        m_scene->wireframe = !(m_scene->wireframe);
-    }
+//    if (qt_key == Qt::Key_W) {
+//        m_scene->wireframe = !(m_scene->wireframe);
+//    }
 
-    if (qt_key == Qt::Key_0) {
-        m_scene->fboTexId = 0;      }
-    else if (qt_key == Qt::Key_1) {
-        m_scene->fboTexId = 1;      }
-    else if (qt_key == Qt::Key_2) {
-        m_scene->fboTexId = 2;      }
-    else if (qt_key == Qt::Key_3) {
-        m_scene->fboTexId = 3;      }
-    else if (qt_key == Qt::Key_4) {
-        m_scene->fboTexId = 4;      }
-    else if (qt_key == Qt::Key_5) {
-        m_scene->fboTexId = 5;      }
-    else if (qt_key == Qt::Key_6) {
-        m_scene->fboTexId = 6;      }
+//    if (qt_key == Qt::Key_0) {
+//        m_scene->fboTexId = 0;      }
+//    else if (qt_key == Qt::Key_1) {
+//        m_scene->fboTexId = 1;      }
+//    else if (qt_key == Qt::Key_2) {
+//        m_scene->fboTexId = 2;      }
+//    else if (qt_key == Qt::Key_3) {
+//        m_scene->fboTexId = 3;      }
+//    else if (qt_key == Qt::Key_4) {
+//        m_scene->fboTexId = 4;      }
+//    else if (qt_key == Qt::Key_5) {
+//        m_scene->fboTexId = 5;      }
+//    else if (qt_key == Qt::Key_6) {
+//        m_scene->fboTexId = 6;      }
 }
 
 void Renderer::reloadShader()
@@ -111,6 +111,16 @@ void Renderer::reloadShader()
     m_scene->s.addTessEvaluationShader("simple_tese.glsl");
     m_scene->s.addGeometryShader("simple.geom");
     m_scene->s.link();
+}
+
+void Renderer::toggleWireframe()
+{
+    m_scene->wireframe = !m_scene->wireframe;
+}
+
+void Renderer::setFinalFboTarget(int targetIndex)
+{
+    m_scene->fboTexId = targetIndex;
 }
 
 bool Renderer::initGL()

@@ -21,6 +21,10 @@ public:
     virtual void onKeyPress(int qt_key) = 0;
 
     virtual void reloadShader() = 0;
+
+    virtual void toggleWireframe() = 0;
+
+    virtual void setFinalFboTarget(int targetIndex) = 0;
 };
 
 #endif // RENDERERINTERFACE_H

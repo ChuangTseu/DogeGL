@@ -21,6 +21,8 @@ public:
     virtual void onKeyPress(int qt_key);
 
     virtual void reloadShader();
+    virtual void toggleWireframe();
+    virtual void setFinalFboTarget(int targetIndex);
 
     bool initGL();
     void initScene();

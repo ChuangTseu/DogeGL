@@ -41,6 +41,10 @@ public slots:
 
     void reloadShader();
 
+    void toggleWireframe();
+
+    void setFinalFboTarget(int targetIndex);
+
 private:
     RendererInterface* m_renderer;
 

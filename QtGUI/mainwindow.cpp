@@ -33,3 +33,53 @@ void MainWindow::reloadShader()
 {
     m_oglWidget->reloadShader();
 }
+
+void MainWindow::toggleWireframe()
+{
+    m_oglWidget->toggleWireframe();
+}
+
+void MainWindow::setTargetStandard()
+{
+    setFinalFboTarget(0);
+
+    uncheckTargetActionsAll();
+    ui->actionStandard->setChecked(true);
+}
+
+void MainWindow::setTargetNormal()
+{
+    setFinalFboTarget(1);
+
+    uncheckTargetActionsAll();
+    ui->actionNormal->setChecked(true);
+}
+
+void MainWindow::setTargetTexcoord()
+{
+    setFinalFboTarget(2);
+
+    uncheckTargetActionsAll();
+    ui->actionTexcoord->setChecked(true);
+}
+
+void MainWindow::setTargetDepth()
+{
+    setFinalFboTarget(3);
+
+    uncheckTargetActionsAll();
+    ui->actionDepth->setChecked(true);
+}
+
+void MainWindow::setFinalFboTarget(int targetIndex)
+{
+    m_oglWidget->setFinalFboTarget(targetIndex);
+}
+
+void MainWindow::uncheckTargetActionsAll()
+{
+    ui->actionStandard->setChecked(false);
+    ui->actionNormal->setChecked(false);
+    ui->actionTexcoord->setChecked(false);
+    ui->actionDepth->setChecked(false);
+}

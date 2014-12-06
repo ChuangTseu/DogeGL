@@ -27,6 +27,18 @@ public slots:
 
     void reloadShader();
 
+    void toggleWireframe();
+
+    void setTargetStandard();
+    void setTargetNormal();
+    void setTargetTexcoord();
+    void setTargetDepth();
+
+private:
+    void setFinalFboTarget(int targetIndex);
+
+    void uncheckTargetActionsAll();
+
 private:
     Ui::MainWindow *ui;
 

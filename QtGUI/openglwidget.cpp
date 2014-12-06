@@ -88,3 +88,13 @@ void OpenGLWidget::reloadShader()
 {
     m_renderer->reloadShader();
 }
+
+void OpenGLWidget::toggleWireframe()
+{
+    m_renderer->toggleWireframe();
+}
+
+void OpenGLWidget::setFinalFboTarget(int targetIndex)
+{
+    m_renderer->setFinalFboTarget(targetIndex);
+}
