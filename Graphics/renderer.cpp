@@ -68,10 +68,10 @@ void Renderer::onKeyPress(int qt_key)
         m_scene->position -= kright*0.1f;        }
     if (qt_key == Qt::Key_D /*D*/) {
         m_scene->position += kright*0.1f;        }
-    if (qt_key == Qt::Key_Shift /*SHIFT*/) {
-        m_scene->position += m_scene->up*0.1f;        }
-    if (qt_key == Qt::Key_Control /*CTRL*/) {
-        m_scene->position -= m_scene->up*0.1f;        }
+//    if (qt_key == Qt::Key_Shift /*SHIFT*/) {
+//        m_scene->position += m_scene->up*0.1f;        }
+//    if (qt_key == Qt::Key_Control /*CTRL*/) {
+//        m_scene->position -= m_scene->up*0.1f;        }
 
     if (qt_key == Qt::Key_Plus) {
         m_scene->userDisplacementFactor += 0.005f;
@@ -174,6 +174,44 @@ bool Renderer::initGL()
     glEnable(GL_CULL_FACE);*/
 
     return true;
+}
+
+void Renderer::rotateCamera(int mouse_x_rel, int mouse_y_rel)
+{
+    std::cerr << mouse_x_rel << " " << mouse_y_rel;
+
+    vec3 kright = normalize(cross(m_scene->forward, m_scene->up));
+    vec3 kdown = normalize(cross(m_scene->forward, kright));
+
+    m_scene->forward += kright*(mouse_x_rel/100.f);
+    m_scene->forward += kdown*(mouse_y_rel/100.f);
+
+//    forward.normalize();
+
+//    if (input.getKey(SDL_SCANCODE_W)) {
+//        position += forward*0.1f;        }
+//    if (input.getKey(SDL_SCANCODE_S)) {
+//        position -= forward*0.1f;        }
+//    if (input.getKey(SDL_SCANCODE_A)) {
+//        position -= kright*0.1f;        }
+//    if (input.getKey(SDL_SCANCODE_D)) {
+//        position += kright*0.1f;        }
+//    if (input.getKey(SDL_SCANCODE_LSHIFT)) {
+//        position += up*0.1f;        }
+//    if (input.getKey(SDL_SCANCODE_LCTRL)) {
+//        position -= up*0.1f;        }
+
+    m_scene->camera.lookAt(m_scene->position, m_scene->position + m_scene->forward, m_scene->up);
+}
+
+void Renderer::translateCamera(int mouse_x_rel, int mouse_y_rel, int mouse_z_rel)
+{
+    vec3 kright = normalize(cross(m_scene->forward, m_scene->up));
+    vec3 kdown = normalize(cross(m_scene->forward, kright));
+
+    m_scene->position += kright*(-0.1f*mouse_x_rel);
+    m_scene->position += m_scene->up*(0.1f*mouse_y_rel);
+    m_scene->position += m_scene->forward*(0.1f*mouse_z_rel);
 }
 
 void Renderer::render()

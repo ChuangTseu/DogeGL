@@ -55,11 +55,27 @@ void OpenGLWidget::paintGL(void) {
 }
 
 void OpenGLWidget::mousePressEvent(QMouseEvent* event) {
-
+    m_lastMousePos.rx() = event->x();
+    m_lastMousePos.ry() = event->y();
 }
 
 void OpenGLWidget::mouseMoveEvent(QMouseEvent* event) {
+    QPoint currentMousePos(event->x(), event->y());
 
+
+    QPoint diff = currentMousePos - m_lastMousePos;
+
+    if (event->modifiers() & Qt::ControlModifier) {
+        m_renderer->translateCamera(diff.x(), diff.y(), 0);
+    }
+    else if (event->modifiers() & Qt::ShiftModifier) {
+        m_renderer->translateCamera(0, 0, -diff.y());
+    }
+    else {
+        m_renderer->rotateCamera(diff.x(), diff.y());
+    }
+
+    m_lastMousePos = currentMousePos;
 }
 
 void OpenGLWidget::mouseReleaseEvent(QMouseEvent* event) {
@@ -67,7 +83,7 @@ void OpenGLWidget::mouseReleaseEvent(QMouseEvent* event) {
 }
 
 void OpenGLWidget::wheelEvent(QWheelEvent* event) {
-
+    m_renderer->translateCamera(0, 0, event->delta() / 10);
 }
 
 void OpenGLWidget::keyPressEvent(QKeyEvent* event)

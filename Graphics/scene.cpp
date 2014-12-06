@@ -49,12 +49,19 @@ void Scene::initScene() {
     dogeMap.loadFromFile("disp_data/wall002_hmap2_512x512.jpg");
 
 
-    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_X, "Ryfjallet_512_y_flipped/posx.jpg");
-    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_X, "Ryfjallet_512_y_flipped/negx.jpg");
-    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_Y, "Ryfjallet_512_y_flipped/posy.jpg");
-    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_Y, "Ryfjallet_512_y_flipped/negy.jpg");
-    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_Z, "Ryfjallet_512_y_flipped/posz.jpg");
-    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_Z, "Ryfjallet_512_y_flipped/negz.jpg");
+    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_X, "Ryfjallet_512/posx.jpg");
+    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_X, "Ryfjallet_512/negx.jpg");
+    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_Y, "Ryfjallet_512/posy.jpg");
+    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_Y, "Ryfjallet_512/negy.jpg");
+    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_Z, "Ryfjallet_512/posz.jpg");
+    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_Z, "Ryfjallet_512/negz.jpg");
+
+//    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_X, "grace/posx.jpg");
+//    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_X, "grace/negx.jpg");
+//    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_Y, "grace/posy.jpg");
+//    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_Y, "grace/negy.jpg");
+//    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_Z, "grace/posz.jpg");
+//    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_Z, "grace/negz.jpg");
 
     skybox.feedCubemap(cubemap);
 

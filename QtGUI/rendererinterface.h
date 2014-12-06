@@ -25,6 +25,10 @@ public:
     virtual void toggleWireframe() = 0;
 
     virtual void setFinalFboTarget(int targetIndex) = 0;
+
+    virtual void rotateCamera(int mouse_x_rel, int mouse_y_rel) = 0;
+
+    virtual void translateCamera(int mouse_x_rel, int mouse_y_rel, int mouse_z_rel) = 0;
 };
 
 #endif // RENDERERINTERFACE_H

@@ -3,6 +3,8 @@
 
 #include <QGLWidget>
 
+#include <QPoint>
+
 #include "rendererinterface.h"
 
 class Renderer;
@@ -49,6 +51,8 @@ private:
     RendererInterface* m_renderer;
 
     QTimer* m_realTimeTimer;
+
+    QPoint m_lastMousePos;
 };
 
 #endif // OPENGLWIDGET_H

@@ -29,6 +29,8 @@ public:
 
     void render();
 
+    void rotateCamera(int mouse_x_rel, int mouse_y_rel);
+    void translateCamera(int mouse_x_rel, int mouse_y_rel, int mouse_z_rel);
 
 private:
     int m_width;

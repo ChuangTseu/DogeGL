@@ -12,7 +12,7 @@ Image::~Image() {
 //    delete m_data;
 }
 
-bool Image::loadFromFile(std::string filename)
+bool Image::loadFromFile(std::string filename, bool reversed)
 {
     ilInit();
 
@@ -22,7 +22,11 @@ bool Image::loadFromFile(std::string filename)
     ilBindImage(m_imageId);
 
     ilEnable(IL_ORIGIN_SET);
-    ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
+
+    if (reversed)
+        ilOriginFunc(IL_ORIGIN_UPPER_LEFT);
+    else
+        ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
 
     if (ilLoadImage(filename.c_str()) != IL_TRUE) {
         std::cerr << "Error loading image from: " << filename << '\n';
