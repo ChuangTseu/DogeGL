@@ -125,6 +125,9 @@ void RenderLoop(Scene& scene)
     cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_Z, "Ryfjallet_512_y_flipped/posz.jpg");
     cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_Z, "Ryfjallet_512_y_flipped/negz.jpg");
 
+    Texture angularmap;
+
+    angularmap.loadFromFile("grace_probe.tif");
 
     Skybox skybox;
 
@@ -265,6 +268,7 @@ void RenderLoop(Scene& scene)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
+        angularmap.bindToTarget(GL_TEXTURE0);
         skybox.render(projection, camera.getPureViewNoTranslation());
 //        skybox.render(projection, camera.getView());
 

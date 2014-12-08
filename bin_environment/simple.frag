@@ -44,6 +44,8 @@ uniform vec3 kd;
 uniform vec3 ks;
 uniform float shininess;
 
+float roughness = 0.2;
+
 //vec3 ka = vec3(1, 1, 1);
 //vec3 kd = vec3(1, 1, 1);
 //vec3 ks = vec3(1, 1, 1);
@@ -54,7 +56,32 @@ layout(location = 0) out vec4 fragColor;
 layout(location = 1) out vec4 normalColor;
 layout(location = 2) out vec4 texcoordColor;
 
-vec3 blinn_phong_calc_internal(vec3 lightDir, vec3 color, vec3 normal) {
+float fresnel_schlick(float f0, float LdotH) {
+    return f0 + (1 - f0) * pow(1 - LdotH, 5);
+}
+
+
+//float fresnel_schlick(float cspec, vec3 l, vec3 h) {
+//    return cspec + (1 - cspec) * (1 - pow(dot(l,h), 5));
+//}
+
+float ggx_dist() {
+    return 0;
+}
+
+float beckmann_dist(float m, float NdotH) {
+    if (NdotH == 0) return 0; //Tmp, find a better solution not involving any 'if'
+
+    float m_2 = m*m;
+    float NdotH_2 = NdotH*NdotH;
+    return exp((NdotH_2 - 1)/(m_2 * NdotH_2)) / (m_2*NdotH_2*NdotH_2);
+}
+
+float g_term(float NdotH, float NdotV, float VdotH) {
+    return min(1, 2*NdotH*NdotV/VdotH);
+}
+
+vec3 blinn_phong_calc_internal(vec3 lightDir, vec3 lightColor, vec3 normal) {
     float Id = clamp(dot(normal, lightDir), 0, 1);
 
     vec3 viewDir = normalize(eyePosition - inData.position);
@@ -66,8 +93,8 @@ vec3 blinn_phong_calc_internal(vec3 lightDir, vec3 color, vec3 normal) {
     }
 
     // Replace the 3 colors by light ambiant, diffuse and specular intensity respectively
-    float tmpAmbientFactor = 0.1;
-    return (ka*color*tmpAmbientFactor + texture(texSampler, inData.texcoord).xyz*Id*color + ks*Is*color);
+    float tmpAmbientFactor = 0.2;
+    return ka*lightColor*tmpAmbientFactor + (texture(texSampler, inData.texcoord).xyz + ks*Is) * lightColor*Id;
 }
 
 vec3 blinn_phong_calc(DirLight light, vec3 normal) {
@@ -80,6 +107,44 @@ vec3 blinn_phong_calc(PointLight light, vec3 normal) {
     vec3 lightDir = normalize(light.position - eyePosition);
 
     return blinn_phong_calc_internal(lightDir, light.color, normal);
+}
+
+vec3 cook_torrance_calc_internal(vec3 lightDir, vec3 lightColor, vec3 normal) {
+    vec3 viewDir = normalize(eyePosition - inData.position);
+    vec3 halfV = normalize(lightDir + viewDir);
+
+    float NdotH = clamp(dot(normal, halfV), 0, 1);
+    float NdotV = clamp(dot(normal, viewDir), 0, 1);
+    float VdotH = clamp(dot(viewDir, halfV), 0, 1);
+    float LdotH = clamp(dot(lightDir, halfV), 0, 1);
+    float NdotL = clamp(dot(normal, lightDir), 0, 1);
+
+    float D = beckmann_dist(roughness, NdotH);
+    float G = g_term(NdotH, NdotV, VdotH);
+    float F = fresnel_schlick(ks, LdotH);
+
+    float Rs_divider = (4*NdotL*NdotV); //Might be zero, douh
+    float Rs;
+    if (Rs_divider == 0) //Tmp, find a better solution not involving any 'if'
+        Rs = 0;
+    else
+        Rs = (D*F*G) / Rs_divider;
+
+    vec3 diffuse = texture(texSampler, inData.texcoord).xyz;
+
+    return (diffuse + Rs*ks) * lightColor*NdotL;
+}
+
+vec3 cook_torrance_calc(DirLight light, vec3 normal) {
+    vec3 lightDir = normalize(-light.direction);
+
+    return cook_torrance_calc_internal(lightDir, light.color, normal);
+}
+
+vec3 cook_torrance_calc(PointLight light, vec3 normal) {
+    vec3 lightDir = normalize(light.position - eyePosition);
+
+    return cook_torrance_calc_internal(lightDir, light.color, normal);
 }
 
 const mat4 gracered = mat4(
@@ -127,13 +192,11 @@ void main( void )
 
 //    normal = normalize(inData.normal);
 
-    finalColor = texture(texSampler, inData.texcoord).xyz;
-
 //    finalColor = texture(cubeMapSampler, reflect(normalize(eyePosition - inData.position), normal)).xyz;
 
-    vec3 Cfinal = blinn_phong_calc(dirLight, normal) + blinn_phong_calc(pointLight, normal);
+    vec3 Cfinal = cook_torrance_calc(dirLight, normal) + cook_torrance_calc(pointLight, normal);// + vec3(0.2, 0, 0);
 
-    fragColor = vec4( /*finalColor **/ Cfinal, 1.0 );
+    fragColor = vec4(Cfinal, 1.0);
 
 
     /* DEBUG OUTPUT */
@@ -148,25 +211,25 @@ void main( void )
         }
     }
 
-    vec4 lightSpaceFragPosition = lightMVP * vec4(inData.position, 1);
+//    vec4 lightSpaceFragPosition = lightMVP * vec4(inData.position, 1);
 
-    vec3 projCoords = lightSpaceFragPosition.xyz / lightSpaceFragPosition.w;
+//    vec3 projCoords = lightSpaceFragPosition.xyz / lightSpaceFragPosition.w;
 
-    vec3 shadowMapUVCoords;
-    shadowMapUVCoords.x = 0.5 * projCoords.x + 0.5;
-    shadowMapUVCoords.y = 0.5 * projCoords.y + 0.5;
-    shadowMapUVCoords.z = 0.5 * projCoords.z + 0.5;
-    float z = 0.5 * projCoords.z + 0.5;
+//    vec3 shadowMapUVCoords;
+//    shadowMapUVCoords.x = 0.5 * projCoords.x + 0.5;
+//    shadowMapUVCoords.y = 0.5 * projCoords.y + 0.5;
+//    shadowMapUVCoords.z = 0.5 * projCoords.z + 0.5;
+//    float z = 0.5 * projCoords.z + 0.5;
 
-    shadowMapUVCoords.z = shadowMapUVCoords.z - 0.00005;
+//    shadowMapUVCoords.z = shadowMapUVCoords.z - 0.00005;
 
-    float shadowFactor;
+//    float shadowFactor;
 
-    float depth = texture(shadowMapSampler, shadowMapUVCoords);
+//    float depth = texture(shadowMapSampler, shadowMapUVCoords);
 
-    shadowFactor = depth;
+//    shadowFactor = depth;
 
-    fragColor = fragColor * shadowFactor;
+//    fragColor = fragColor * shadowFactor;
 
 
 //    fragColor = texture(cubeMapSampler, reflect(-normalize(eyePosition - inData.position), normal));
