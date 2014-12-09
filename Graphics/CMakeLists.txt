@@ -3,11 +3,6 @@ SET(LIBRARY_NAME "GRAPHICS")
 
 FILE(GLOB src *)
 
-find_package(Qt5Core)
-
-include_directories(${Qt5Core_INCLUDE_DIRS})
-message("Qt5Core_INCLUDE_DIRS: ${Qt5Core_INCLUDE_DIRS}")
-
 ADD_LIBRARY(GRAPHICS STATIC ${src})
 
 #target_link_libraries(GRAPHICS ${GLEW_LIBRARY} ${OPENGL_LIBRARIES})

@@ -6,7 +6,7 @@
 #endif
 
 #ifdef USE_SDL2
-    #include "Graphics/scene.h"
+    #include "Sdl2GUI/mainwindow.h"
 #endif
 
 #include "Graphics/renderer.h"
@@ -33,18 +33,18 @@ namespace MainSpeaker = Michel;
 
 int main(int argc, char *argv[])
 {   
+    Renderer renderer(640, 480);
+
     #ifdef USE_SDL2
 
     (void) argc;
     (void) argv;
 
-    Scene scene(640, 480);
+    MainWindow w("DogeGL Next Gen", 640, 480);
 
-    scene.initWindow();
+    w.setRenderer(&renderer);
 
-    scene.initGL();
-
-    scene.mainLoop();
+    w.runLoop();
 
     #endif
 
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
 
-    Renderer renderer(640, 480);
+
 
     MainWindow w;
     w.setRenderer(&renderer); //DO NOT FORGET

@@ -15,8 +15,6 @@ find_package(Qt5OpenGL)
 
 find_package(OpenGL REQUIRED) # OpenGL
 
-find_package(GLEW REQUIRED) # GLEW
-
 include_directories(
         ${Qt5Core_INCLUDE_DIRS}
         ${Qt5Widgets_INCLUDE_DIRS}
@@ -39,7 +37,7 @@ ADD_DEFINITIONS(${QT_DEFINITIONS})
 
 ADD_LIBRARY(QtGUI STATIC ${src} ${QT_UI_FILES})
 
-target_link_libraries(QtGUI Qt5::Core Qt5::Widgets Qt5::Gui Qt5::OpenGL GRAPHICS ${GLEW_LIBRARY} ${OPENGL_LIBRARIES})
+target_link_libraries(QtGUI Qt5::Core Qt5::Widgets Qt5::Gui Qt5::OpenGL GRAPHICS ${OPENGL_LIBRARIES})
 
 SET_TARGET_PROPERTIES(QtGUI PROPERTIES VERSION ${LIBRARY_VERSION})
 

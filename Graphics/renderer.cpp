@@ -68,10 +68,10 @@ void Renderer::onKeyPress(int qt_key)
         m_scene->position -= kright*0.1f;        }
     if (qt_key == Qt::Key_D /*D*/) {
         m_scene->position += kright*0.1f;        }
-//    if (qt_key == Qt::Key_Shift /*SHIFT*/) {
-//        m_scene->position += m_scene->up*0.1f;        }
-//    if (qt_key == Qt::Key_Control /*CTRL*/) {
-//        m_scene->position -= m_scene->up*0.1f;        }
+    if (qt_key == Qt::Key_Shift /*SHIFT*/) {
+        m_scene->position += m_scene->up*0.1f;        }
+    if (qt_key == Qt::Key_Control /*CTRL*/) {
+        m_scene->position -= m_scene->up*0.1f;        }
 
     if (qt_key == Qt::Key_Plus) {
         m_scene->userDisplacementFactor += 0.005f;
@@ -178,8 +178,6 @@ bool Renderer::initGL()
 
 void Renderer::rotateCamera(int mouse_x_rel, int mouse_y_rel)
 {
-    std::cerr << mouse_x_rel << " " << mouse_y_rel;
-
     vec3 kright = normalize(cross(m_scene->forward, m_scene->up));
     vec3 kdown = normalize(cross(m_scene->forward, kright));
 
