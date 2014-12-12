@@ -26,8 +26,8 @@ public:
 
     void bindToTarget(GLuint target) const;
 
-    bool loadFromFile(std::string filename);
-    bool loadEmpty(int width, int height, TargetType type);
+    bool loadFromFile(std::string filename, GLuint internalFormat = GL_RGB);
+    bool loadEmpty(int width, int height, TargetType type, GLuint channelsType = GL_RGBA);
 
     bool loadFromMaterialColor(Color3f matColor);
 

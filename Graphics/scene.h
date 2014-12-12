@@ -10,6 +10,7 @@
 #include "cubemap.h"
 #include "skybox.h"
 #include "shadowmap.h"
+#include "screenpass.h"
 
 #include "MathsTools/mat4.h"
 #include "MathsTools/vec3.h"
@@ -27,6 +28,8 @@ public:
 
     void render();
 
+    void reloadShaders();
+
 public:
     int m_width;
     int m_height;
@@ -36,9 +39,18 @@ public:
     /* SHADERS */
     Shader s;
 
-    Shader quadFboShader;
+    ScreenPass reducePass;
+    ScreenPass finalScreenPass;
+    ScreenPass toLuminancePass;
+    ScreenPass tonemapPass;
 
-    Mesh quadFbo;
+    std::vector<Shader*> renewableShadersList;
+
+//    Shader quadFboShader;
+
+//    Shader reduceShader;
+
+//    Mesh quadFbo;
 
     Camera camera;
 

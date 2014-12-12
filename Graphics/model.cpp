@@ -171,9 +171,9 @@ bool Model::loadFromFile(const std::string& filename)
     m_materials.clear();
     m_materials.resize(scene->mNumMaterials);
 
-    std::cerr << filename << '\n';
-    std::cerr << "Model contains " << scene->mNumMeshes << " meshes" << '\n';
-    std::cerr << "Model contains " << scene->mNumMaterials << " materials" << '\n';
+//    std::cerr << filename << '\n';
+//    std::cerr << "Model contains " << scene->mNumMeshes << " meshes" << '\n';
+//    std::cerr << "Model contains " << scene->mNumMaterials << " materials" << '\n';
 //    std::cerr << '\n';
 
     std::string dir = filename;

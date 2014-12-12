@@ -22,6 +22,7 @@ include_directories(
         ${Qt5OpenGL_INCLUDE_DIRS}
 
         ${CMAKE_CURRENT_BINARY_DIR}
+        .
 )
 
 if(Qt5_POSITION_INDEPENDENT_CODE)

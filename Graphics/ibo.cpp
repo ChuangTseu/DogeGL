@@ -16,7 +16,6 @@ void IBO::submitData(GLuint* indices_data, size_t size) {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, size*sizeof(GLuint), nullptr, GL_STATIC_DRAW);
     glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, size*sizeof(GLuint), indices_data);
 
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     IBO::unbind();
 }
 

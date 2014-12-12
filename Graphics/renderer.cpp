@@ -15,6 +15,8 @@
 #include "skybox.h"
 #include "shadowmap.h"
 
+#include "Utils/timer.h"
+
 Renderer::Renderer(int width, int height) :
     m_width(width),
     m_height(height)
@@ -39,6 +41,8 @@ void Renderer::resizeGL(int width, int height) {
     m_height = height;
 
     m_scene->resize(width, height);
+
+    std::cerr << "Resizing to " << width << " x " << height << '\n';
 }
 
 void Renderer::paintGL(void) {
@@ -102,15 +106,19 @@ void Renderer::onKeyPress(int qt_key)
 
 void Renderer::reloadShader()
 {
-    // Reload Shaders
-    m_scene->s.renew();
+//    // Reload Shaders
+//    m_scene->s.renew();
 
-    m_scene->s.addVertexShader("simple.vert");
-    m_scene->s.addFragmentShader("simple.frag");
-    m_scene->s.addTessControlShader("simple_tesc.glsl");
-    m_scene->s.addTessEvaluationShader("simple_tese.glsl");
-    m_scene->s.addGeometryShader("simple.geom");
-    m_scene->s.link();
+//    m_scene->s.addVertexShader("simple.vert");
+//    m_scene->s.addFragmentShader("simple.frag");
+//    m_scene->s.addTessControlShader("simple_tesc.glsl");
+//    m_scene->s.addTessEvaluationShader("simple_tese.glsl");
+//    m_scene->s.addGeometryShader("simple.geom");
+//    m_scene->s.link();
+
+//    m_scene->s.reload();
+
+    m_scene->reloadShaders();
 }
 
 void Renderer::toggleWireframe()
@@ -214,5 +222,13 @@ void Renderer::translateCamera(int mouse_x_rel, int mouse_y_rel, int mouse_z_rel
 
 void Renderer::render()
 {
+    Timer timer;
+
+    timer.glStart();
+
     m_scene->render();
+
+    timer.glStop();
+
+    std::cerr << "Render time: " << timer.getElapsedTimeInMilliSec() << '\n';
 }

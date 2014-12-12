@@ -3,23 +3,27 @@
 #include "../helpers.h"
 
 bool Shader::addVertexShader(std::string filename) {
+    m_currentShaderFilenames[VERTEX_SHADER].reset(new std::string(filename));
     return addShader(filename, GL_VERTEX_SHADER);
 }
 
 bool Shader::addFragmentShader(std::string filename) {
+    m_currentShaderFilenames[FRAGMENT_SHADER].reset(new std::string(filename));
     return addShader(filename, GL_FRAGMENT_SHADER);
 }
 
 bool Shader::addTessControlShader(std::string filename) {
+    m_currentShaderFilenames[TESS_CONTROL_SHADER].reset(new std::string(filename));
     return addShader(filename, GL_TESS_CONTROL_SHADER);
 }
 
 bool Shader::addTessEvaluationShader(std::string filename) {
+    m_currentShaderFilenames[TESS_EVAL_SHADER].reset(new std::string(filename));
     return addShader(filename, GL_TESS_EVALUATION_SHADER);
 }
 
-bool Shader::addGeometryShader(std::string filename)
-{
+bool Shader::addGeometryShader(std::string filename) {
+    m_currentShaderFilenames[GEOMETRY_SHADER].reset(new std::string(filename));
     return addShader(filename, GL_GEOMETRY_SHADER);
 }
 
@@ -50,7 +54,7 @@ bool Shader::addShader(std::string filename, GLenum type) {
         GLsizei log_length = 0;
         GLchar message[1024];
         glGetShaderInfoLog(shaderId, 1024, &log_length, message);
-        // Write the error to a log
+
         std::cerr << "Error compiling shader " << filename << ": " << message;
 
         return false;
@@ -82,7 +86,7 @@ bool Shader::link() {
         GLsizei log_length = 0;
         GLchar message[1024];
         glGetProgramInfoLog(m_program, 1024, &log_length, message);
-        // Write the error to a log
+
         std::cerr << "Error linking program: " << message;
 
         return false;

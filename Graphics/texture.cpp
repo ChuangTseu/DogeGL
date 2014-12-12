@@ -18,7 +18,7 @@ void Texture::bindToTarget(GLuint target) const
     glBindTexture(GL_TEXTURE_2D, m_tex);
 }
 
-bool Texture::loadFromFile(std::string filename)
+bool Texture::loadFromFile(std::string filename, GLuint internalFormat)
 {
     Image image;
 
@@ -42,7 +42,7 @@ bool Texture::loadFromFile(std::string filename)
         break;
     }
 
-    glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, image.getWidth(), image.getHeight(), 0, formatFrom, GL_UNSIGNED_BYTE, image.getData());
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, image.getWidth(), image.getHeight(), 0, formatFrom, GL_UNSIGNED_BYTE, image.getData());
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -56,7 +56,7 @@ bool Texture::loadFromFile(std::string filename)
 }
 
 
-bool Texture::loadEmpty(int width, int height, TargetType type)
+bool Texture::loadEmpty(int width, int height, TargetType type, GLuint channelsType)
 {
     glBindTexture(GL_TEXTURE_2D, m_tex);
 
@@ -67,7 +67,13 @@ bool Texture::loadEmpty(int width, int height, TargetType type)
 //    }
 
     if (type == TargetType::COLOR) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+        glTexImage2D(GL_TEXTURE_2D, 0, channelsType, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     }
     else if (type == TargetType::DEPTH) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
@@ -86,9 +92,6 @@ bool Texture::loadEmpty(int width, int height, TargetType type)
 
         return false;
     }
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 
     return true;

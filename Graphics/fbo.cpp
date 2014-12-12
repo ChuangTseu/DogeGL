@@ -9,7 +9,15 @@ FBO::FBO(int width, int height, int numColorTextures, bool useTextureForDepth) :
 
     m_colorTextures.reserve(numColorTextures + useTextureForDepth);
 
-    for (int i = 0; i < numColorTextures; ++i) {
+    if (numColorTextures > 0) {
+        m_colorTextures.emplace_back();
+
+        m_colorTextures[0].loadEmpty(width, height, Texture::TargetType::COLOR, GL_RGBA16F);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_colorTextures[0].getId(), 0);
+    }
+
+    for (int i = 1; i < numColorTextures; ++i) {
         m_colorTextures.emplace_back();
 
         m_colorTextures[i].loadEmpty(width, height, Texture::TargetType::COLOR);
@@ -31,15 +39,14 @@ FBO::FBO(int width, int height, int numColorTextures, bool useTextureForDepth) :
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthRenderBufferId);
     }
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         std::cerr << "Error. Framebuffer INCOMPLETE." << '\n';
     }
 
-
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 FBO::~FBO() {
+    glDeleteRenderbuffers(1, &m_depthRenderBufferId);
     glDeleteFramebuffers(1, &m_fboId);
 }

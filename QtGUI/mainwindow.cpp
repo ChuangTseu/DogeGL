@@ -11,8 +11,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    m_oglWidget = new OpenGLWidget(this);
-    setCentralWidget(m_oglWidget);
+    m_oglWidget = ui->centralWidget;
+//    m_oglWidget = new OpenGLWidget(this);
+//    setCentralWidget(m_oglWidget);
 }
 
 MainWindow::~MainWindow()
