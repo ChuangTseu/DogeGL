@@ -5,7 +5,9 @@ uniform sampler2D texSampler;
 uniform int screenWidth;
 uniform int screenHeight;
 
-uniform float val;
+uniform float logAvLum;
+uniform float gamma;
+uniform float keyValue;
 
 layout(location = 0, index = 0) out vec4 fragColor;
 
@@ -39,14 +41,13 @@ void main( void )
 
     float Lw = xyzColor.y;//luminance(rgbColor);
 
-    float avLum = exp(val);
+    float avLum = exp(logAvLum);
 
-    float L = (0.18 / avLum) * Lw;
+    float L = (keyValue / avLum) * Lw;
 
     float Ld = L / (1 + L);
 
     const float saturation = 1;
-    const float gamma = 2.2;
 
 //    float r = pow((rgbColor.r / Lw), c) * Ld;
 //    float g = pow((rgbColor.g / Lw), c) * Ld;

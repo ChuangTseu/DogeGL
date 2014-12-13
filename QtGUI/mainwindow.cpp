@@ -11,7 +11,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    m_oglWidget = ui->centralWidget;
+    m_oglWidget = ui->displayArea;
+
 //    m_oglWidget = new OpenGLWidget(this);
 //    setCentralWidget(m_oglWidget);
 }
@@ -23,6 +24,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::setRenderer(RendererInterface *renderer) {
     m_oglWidget->setRenderer(renderer);
+}
+
+void MainWindow::displayRenderTime(double time)
+{
+    ui->statusBar->showMessage(QString::number(time, 'f', 6) + " ms", 1000);
 }
 
 void MainWindow::loadModel()

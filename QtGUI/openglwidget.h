@@ -11,6 +11,8 @@ class Renderer;
 
 class QTimer;
 
+class MainWindow;
+
 class OpenGLWidget : public QGLWidget
 {
     Q_OBJECT
@@ -36,6 +38,9 @@ protected:
 
     void keyPressEvent(QKeyEvent* event);
 
+private:
+    MainWindow *getMainWindow();
+
 signals:
 
 public slots:
@@ -46,6 +51,10 @@ public slots:
     void toggleWireframe();
 
     void setFinalFboTarget(int targetIndex);
+
+    void gammaChanged(float value);
+
+    void keyValueChanged(double value);
 
 private:
     RendererInterface* m_renderer;

@@ -20,6 +20,8 @@ public:
 
     void setRenderer(RendererInterface* renderer);
 
+    void displayRenderTime(double time);
+
 signals:
 
 public slots:

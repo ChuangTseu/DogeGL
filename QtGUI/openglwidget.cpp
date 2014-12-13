@@ -6,6 +6,10 @@
 #include <QFileDialog>
 #include <QKeyEvent>
 
+#include "mainwindow.h"
+
+#include <Utils/timer.h>
+
 OpenGLWidget::OpenGLWidget(QWidget *parent) :
     QGLWidget(parent)
 {
@@ -34,6 +38,10 @@ OpenGLWidget::~OpenGLWidget(void)
 
 }
 
+MainWindow* OpenGLWidget::getMainWindow(void) {
+    return static_cast<MainWindow*>(parent()->parent());
+}
+
 
 void OpenGLWidget::initializeGL(void) {
     m_renderer->initializeGL();
@@ -51,7 +59,14 @@ void OpenGLWidget::resizeGL(int width, int height) {
 }
 
 void OpenGLWidget::paintGL(void) {
+    Timer timer;
+    timer.start();
+
     m_renderer->paintGL();
+
+    timer.stop();
+
+    getMainWindow()->displayRenderTime(timer.getElapsedTimeInMilliSec());
 }
 
 void OpenGLWidget::mousePressEvent(QMouseEvent* event) {
@@ -113,4 +128,14 @@ void OpenGLWidget::toggleWireframe()
 void OpenGLWidget::setFinalFboTarget(int targetIndex)
 {
     m_renderer->setFinalFboTarget(targetIndex);
+}
+
+void OpenGLWidget::gammaChanged(float value)
+{
+    m_renderer->gammaChanged(value);
+}
+
+void OpenGLWidget::keyValueChanged(double value)
+{
+    m_renderer->keyValueChanged(value);
 }

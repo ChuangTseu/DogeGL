@@ -29,6 +29,10 @@ public:
     virtual void rotateCamera(int mouse_x_rel, int mouse_y_rel) = 0;
 
     virtual void translateCamera(int mouse_x_rel, int mouse_y_rel, int mouse_z_rel) = 0;
+
+    virtual void gammaChanged(float value) = 0;
+
+    virtual void keyValueChanged(float value) = 0;
 };
 
 #endif // RENDERERINTERFACE_H

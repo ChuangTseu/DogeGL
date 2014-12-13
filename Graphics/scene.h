@@ -86,6 +86,9 @@ public:
     bool wireframe = false;
 
     int fboTexId = 0;
+
+    float gamma = 2.2f;
+    float keyValue = 0.18f;
 };
 
 #endif // SCENETORENAME_H

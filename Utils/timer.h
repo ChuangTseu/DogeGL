@@ -21,7 +21,7 @@
 #include <sys/time.h>
 #endif
 
-#include "Graphics/GL.h"
+//#include "Graphics/GL.h"
 
 
 class Timer
@@ -38,17 +38,17 @@ public:
     double getElapsedTimeInMicroSec();          // get elapsed time in micro-second
 
 
-    void glStart() {
-        glFinish();
+//    void glStart() {
+//        glFinish();
 
-        start();
-    }
+//        start();
+//    }
 
-    void glStop() {
-        glFinish();
+//    void glStop() {
+//        glFinish();
 
-        stop();
-    }
+//        stop();
+//    }
 
 
 protected:

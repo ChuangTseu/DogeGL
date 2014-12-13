@@ -220,15 +220,25 @@ void Renderer::translateCamera(int mouse_x_rel, int mouse_y_rel, int mouse_z_rel
     m_scene->position += m_scene->forward*(0.1f*mouse_z_rel);
 }
 
+void Renderer::gammaChanged(float value)
+{
+    m_scene->gamma = value;
+}
+
+void Renderer::keyValueChanged(float value)
+{
+    m_scene->keyValue = value;
+}
+
 void Renderer::render()
 {
-    Timer timer;
+//    Timer timer;
 
-    timer.glStart();
+//    timer.start();
 
     m_scene->render();
 
-    timer.glStop();
+//    timer.stop();
 
-    std::cerr << "Render time: " << timer.getElapsedTimeInMilliSec() << '\n';
+//    std::cerr << "Render time: " << timer.getElapsedTimeInMilliSec() << '\n';
 }

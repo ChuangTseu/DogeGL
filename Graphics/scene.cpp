@@ -141,7 +141,7 @@ void Scene::render()
 //        cubeTransformation.rotate(normalize({0.f, 0.f, 1.f}), -90.f);
 
     /* Get your lights ready */
-    DirLight dirLight{vec3{1, 1, 1}, vec3{0, -1, -1}};
+    DirLight dirLight{vec3{2, 2, 2}, vec3{0, -1, -1}};
     PointLight pointLight{vec3{0, 1, 0}, vec3{x*10, 0, z*10}};
 
 
@@ -448,7 +448,9 @@ void Scene::render()
         Shader& tonemapShader = tonemapPass.getShader();
         tonemapShader.use();
 
-        glUniform1f(glGetUniformLocation(tonemapShader.getProgramId(), "val"), onePixel[3]);
+        glUniform1f(glGetUniformLocation(tonemapShader.getProgramId(), "logAvLum"), onePixel[3]);
+        glUniform1f(glGetUniformLocation(tonemapShader.getProgramId(), "gamma"), gamma);
+        glUniform1f(glGetUniformLocation(tonemapShader.getProgramId(), "keyValue"), keyValue);
         tonemapPass.fire();
 
 //        finalScreenPass.fire();

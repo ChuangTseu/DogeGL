@@ -32,6 +32,9 @@ public:
     void rotateCamera(int mouse_x_rel, int mouse_y_rel);
     void translateCamera(int mouse_x_rel, int mouse_y_rel, int mouse_z_rel);
 
+    void gammaChanged(float value);
+    void keyValueChanged(float value);
+
 private:
     int m_width;
     int m_height;
