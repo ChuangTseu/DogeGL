@@ -12,6 +12,4 @@ void main( void )
     vec2 screenTexCoord = vec2(gl_FragCoord.x/screenWidth, gl_FragCoord.y/screenHeight);
 
     fragColor = texture(texSampler, screenTexCoord);
-
-//    fragColor = vec4(1,0,0,1);
 }

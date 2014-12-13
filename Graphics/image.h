@@ -23,7 +23,7 @@ public:
 
     ~Image();
 
-    bool loadFromFile(std::string filename);
+    bool loadFromFile(std::string filename, bool reversed = false);
 
     unsigned int getWidth() const {
         return m_width;

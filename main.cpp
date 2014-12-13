@@ -1,28 +1,72 @@
 #include <iostream>
 
-#include "helpers.h"
+#ifdef USE_QT
+    #include <QApplication>
+    #include "QtGUI/mainwindow.h"
+#endif
 
-#include "MathsTools/vec.h"
+#ifdef USE_SDL2
+    #include "Sdl2GUI/mainwindow.h"
+#endif
 
-#include "MathsTools/mat4.h"
+#include "Graphics/renderer.h"
 
-#include "Graphics/shader.h"
+namespace Michel {
+    class Speaker {
+    public:
+        static void say() {
+            std::cerr << "Hi! I'm Michel! \n";
+        }
+    };
+}
 
-#include "Graphics/scene.h"
+namespace Bob {
+    class Speaker {
+    public:
+        static void say() {
+            std::cerr << "Bonjour! Je suis Bob. \n";
+        }
+    };
+}
+
+namespace MainSpeaker = Michel;
 
 int main(int argc, char *argv[])
-{
+{   
+    Renderer renderer(640, 480);
+
+    #ifdef USE_SDL2
+
     (void) argc;
     (void) argv;
 
+    MainWindow w("DogeGL Next Gen", 640, 480);
 
-    Scene scene(640, 480);
+    w.setRenderer(&renderer);
 
-    scene.initWindow();
+    w.runLoop();
 
-    scene.initGL();
+    #endif
 
-    scene.mainLoop();
+
+    #ifdef USE_QT
+
+    QApplication app(argc, argv);
+
+
+
+    MainWindow w;
+    w.setRenderer(&renderer); //DO NOT FORGET
+
+    w.show();
+
+    return(app.exec());
+
+    #endif
+
+    std::cerr << "Bob\n";
+
+    MainSpeaker::Speaker::say();
 
     return 0;
 }

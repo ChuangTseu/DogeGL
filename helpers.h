@@ -2,7 +2,6 @@
 #define HELPERS_H
 
 #include <string>
-#include <SDL.h>
 #include <iostream>
 #include <string>
 #include <fstream>

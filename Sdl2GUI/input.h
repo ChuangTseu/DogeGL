@@ -56,4 +56,5 @@ private:
     int m_yRel;
 };
 
+
 #endif // INPUT_H
