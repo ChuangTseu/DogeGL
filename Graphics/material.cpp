@@ -57,7 +57,7 @@ bool Material::loadFromAssimpMaterial(const aiMaterial *mat, std::string matBase
         aiString texPath;
 
         if (mat->GetTexture(aiTextureType_DIFFUSE, 0, &texPath, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
-            m_diffuseTexture.loadFromFile(matBaseDir + '/' + texPath.data);
+            m_diffuseTexture.loadFromFile(matBaseDir + '/' + texPath.data, GL_SRGB);
         }
     }
     else {
@@ -86,21 +86,21 @@ bool Material::loadFromAssimpMaterial(const aiMaterial *mat, std::string matBase
 
     }
 
-    TEXTEST(aiTextureType_NONE );
-    TEXTEST(aiTextureType_DIFFUSE);
-    TEXTEST(aiTextureType_SPECULAR );
-    TEXTEST(aiTextureType_AMBIENT );
-    TEXTEST(aiTextureType_EMISSIVE );
-    TEXTEST(aiTextureType_HEIGHT );
-    TEXTEST(aiTextureType_NORMALS );
-    TEXTEST(aiTextureType_SHININESS );
-    TEXTEST(aiTextureType_OPACITY );
-    TEXTEST(aiTextureType_DISPLACEMENT );
-    TEXTEST(aiTextureType_LIGHTMAP );
-    TEXTEST(aiTextureType_REFLECTION );
-    TEXTEST(aiTextureType_UNKNOWN );
+//    TEXTEST(aiTextureType_NONE );
+//    TEXTEST(aiTextureType_DIFFUSE);
+//    TEXTEST(aiTextureType_SPECULAR );
+//    TEXTEST(aiTextureType_AMBIENT );
+//    TEXTEST(aiTextureType_EMISSIVE );
+//    TEXTEST(aiTextureType_HEIGHT );
+//    TEXTEST(aiTextureType_NORMALS );
+//    TEXTEST(aiTextureType_SHININESS );
+//    TEXTEST(aiTextureType_OPACITY );
+//    TEXTEST(aiTextureType_DISPLACEMENT );
+//    TEXTEST(aiTextureType_LIGHTMAP );
+//    TEXTEST(aiTextureType_REFLECTION );
+//    TEXTEST(aiTextureType_UNKNOWN );
 
-    std::cerr << '\n';
+//    std::cerr << '\n';
 
     return true;
 }

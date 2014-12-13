@@ -86,19 +86,19 @@ void aiMat4ToDogeMat4(const aiMatrix4x4& aiMat4, mat4& dogeMat4) {
 }
 
 void Model::handleNode(aiNode* ainode, const aiMatrix4x4& accumulatedTransformation, int level) {
-    std::cerr << "LVL " << level << " Node is: " << ainode->mName.C_Str() << " and has "
-              << ainode->mNumChildren << " children and " << ainode->mNumMeshes << " meshes." << "\n";
+//    std::cerr << "LVL " << level << " Node is: " << ainode->mName.C_Str() << " and has "
+//              << ainode->mNumChildren << " children and " << ainode->mNumMeshes << " meshes." << "\n";
 
     aiMatrix4x4t<float> transformation =  accumulatedTransformation * ainode->mTransformation;
 
-    for (int i = 0 ; i < 4; ++i) {
-        for (int j = 0 ; j < 4; ++j) {
-            std::cerr << ainode->mTransformation[i][j] << " ";
-        }
-        std::cerr << '\n';
-    }
+//    for (int i = 0 ; i < 4; ++i) {
+//        for (int j = 0 ; j < 4; ++j) {
+//            std::cerr << ainode->mTransformation[i][j] << " ";
+//        }
+//        std::cerr << '\n';
+//    }
 
-    std::cerr << '\n';
+//    std::cerr << '\n';
 
     if (ainode->mNumMeshes > 0) {
         ModelNode current;
@@ -117,7 +117,7 @@ void Model::handleNode(aiNode* ainode, const aiMatrix4x4& accumulatedTransformat
         handleNode(ainode->mChildren[i], transformation, level + 1);
     }
 
-    std::cerr << "END OF " << ainode->mName.C_Str() << "\n\n";
+//    std::cerr << "END OF " << ainode->mName.C_Str() << "\n\n";
 
 }
 
@@ -159,6 +159,8 @@ bool Model::loadFromFile(const std::string& filename)
         return false;
     }    
 
+    m_nodes.clear();
+
     aiNode* rootNode = scene->mRootNode;
 
     handleNode(rootNode, aiMatrix4x4());
@@ -169,16 +171,16 @@ bool Model::loadFromFile(const std::string& filename)
     m_materials.clear();
     m_materials.resize(scene->mNumMaterials);
 
-    std::cerr << filename << '\n';
-    std::cerr << "Model contains " << scene->mNumMeshes << " meshes" << '\n';
-    std::cerr << "Model contains " << scene->mNumMaterials << " materials" << '\n';
-    std::cerr << '\n';
+//    std::cerr << filename << '\n';
+//    std::cerr << "Model contains " << scene->mNumMeshes << " meshes" << '\n';
+//    std::cerr << "Model contains " << scene->mNumMaterials << " materials" << '\n';
+//    std::cerr << '\n';
 
     std::string dir = filename;
 
     size_t lastSeparator = dir.find_last_of('/');
 
-    std::cerr << "Last / pos: " << lastSeparator << '\n';
+//    std::cerr << "Last / pos: " << lastSeparator << '\n';
 
     if (lastSeparator != std::string::npos) {
         dir.erase(lastSeparator, dir.size());
@@ -187,7 +189,7 @@ bool Model::loadFromFile(const std::string& filename)
         dir = std::string(".");
     }
 
-    std::cerr << "Dir is: " << dir << '\n';
+//    std::cerr << "Dir is: " << dir << '\n';
 
     for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
         m_meshes[i].loadFromAssimpMesh(scene->mMeshes[i]);
@@ -215,14 +217,14 @@ bool Model::loadFromFile(const std::string& filename)
     return true;
 }
 
-void Model::draw(Shader *s) const {
+void Model::draw(Shader *s) {
     drawAsTriangles(s);
 }
 
-void Model::drawAsPatch(Shader *s) const {
+void Model::drawAsPatch(Shader *s) {
     for (const ModelNode& node : m_nodes) {
         for (unsigned int meshIndex : node.m_meshIndices) {
-            const Mesh& mesh = m_meshes[meshIndex];
+            Mesh& mesh = m_meshes[meshIndex];
 
             if (s) {
                 s->sendMaterial(m_materials[mesh.m_materialIndex]);
@@ -232,10 +234,10 @@ void Model::drawAsPatch(Shader *s) const {
     }
 }
 
-void Model::drawAsTriangles(Shader *s) const {
+void Model::drawAsTriangles(Shader *s) {
     for (const ModelNode& node : m_nodes) {
         for (unsigned int meshIndex : node.m_meshIndices) {
-            const Mesh& mesh = m_meshes[meshIndex];
+            Mesh& mesh = m_meshes[meshIndex];
 
             if (s) {
                 s->sendMaterial(m_materials[mesh.m_materialIndex]);
@@ -253,14 +255,14 @@ void Model::drawAsTriangles(Shader *s) const {
 }
 
 
-void Model::draw(const mat4 &projection, const mat4 &view, const mat4 &model, Shader *s) const {
+void Model::draw(const mat4 &projection, const mat4 &view, const mat4 &model, Shader *s) {
     drawAsTriangles(projection, view, model, s);
 }
 
-void Model::drawAsPatch(const mat4 &projection, const mat4 &view, const mat4 &model, Shader *s) const {
+void Model::drawAsPatch(const mat4 &projection, const mat4 &view, const mat4 &model, Shader *s) {
     for (const ModelNode& node : m_nodes) {
         for (unsigned int meshIndex : node.m_meshIndices) {
-            const Mesh& mesh = m_meshes[meshIndex];
+            Mesh& mesh = m_meshes[meshIndex];
 
             if (s) {
                 s->sendMaterial(m_materials[mesh.m_materialIndex]);
@@ -272,10 +274,10 @@ void Model::drawAsPatch(const mat4 &projection, const mat4 &view, const mat4 &mo
     }
 }
 
-void Model::drawAsTriangles(const mat4 &projection, const mat4 &view, const mat4 &model, Shader *s) const {
+void Model::drawAsTriangles(const mat4 &projection, const mat4 &view, const mat4 &model, Shader *s) {
     for (const ModelNode& node : m_nodes) {
         for (unsigned int meshIndex : node.m_meshIndices) {
-            const Mesh& mesh = m_meshes[meshIndex];
+            Mesh& mesh = m_meshes[meshIndex];
 
             if (s) {
                 s->sendMaterial(m_materials[mesh.m_materialIndex]);

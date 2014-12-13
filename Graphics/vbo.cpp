@@ -7,6 +7,11 @@ VBO::VBO()
     glGenBuffers(1, &m_vboId);
 }
 
+VBO::~VBO()
+{
+    glDeleteBuffers(1, &m_vboId);
+}
+
 void VBO::submitData(Vertex *vertex_data, size_t size) {
     bind();
 
@@ -33,4 +38,8 @@ void VBO::submitData(vec3 *vertex_data, size_t size) {
 
 void VBO::bind() {
     glBindBuffer(GL_ARRAY_BUFFER, m_vboId);
+}
+
+void VBO::unbind() {
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

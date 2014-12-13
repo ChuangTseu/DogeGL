@@ -7,6 +7,7 @@
 
 #include "vbo.h"
 #include "ibo.h"
+#include "vao.h"
 
 #include "vertex.h"
 
@@ -19,17 +20,17 @@ struct Mesh {
     VBO m_vbo;
     IBO m_ibo;
 
-    GLuint m_vao;
+    VAO m_vao;
 
     unsigned int m_materialIndex;
 
     bool loadFromAssimpMesh(const aiMesh* mesh);
 
-    void draw() const;
+    void draw();
 
-    void drawAsTriangles() const;
+    void drawAsTriangles();
 
-    void drawAsPatch() const;
+    void drawAsPatch();
 
     bool loadFullscreenQuad();
 };

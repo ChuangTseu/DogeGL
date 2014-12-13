@@ -29,6 +29,10 @@ public:
         m_cubemap = cubemap;
     }
 
+    Shader& getShader() {
+        return m_skyboxShader;
+    }
+
     void render(const mat4& projection, const mat4& pureView) {
         glDepthMask(GL_FALSE);
 

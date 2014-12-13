@@ -54,13 +54,13 @@ public:
     bool loadBasicType(BasicType type);
     bool loadFullscreenQuad();
 
-    void draw(Shader* s = nullptr) const;
-    void drawAsTriangles(Shader* s = nullptr) const;
-    void drawAsPatch(Shader* s = nullptr) const;
+    void draw(Shader* s = nullptr);
+    void drawAsTriangles(Shader* s = nullptr);
+    void drawAsPatch(Shader* s = nullptr);
 
-    void draw(const mat4& projection, const mat4& view, const mat4& model, Shader* s = nullptr) const;
-    void drawAsTriangles(const mat4& projection, const mat4& view, const mat4& model, Shader* s = nullptr) const;
-    void drawAsPatch(const mat4& projection, const mat4& view, const mat4& model, Shader* s = nullptr) const;
+    void draw(const mat4& projection, const mat4& view, const mat4& model, Shader* s = nullptr);
+    void drawAsTriangles(const mat4& projection, const mat4& view, const mat4& model, Shader* s = nullptr);
+    void drawAsPatch(const mat4& projection, const mat4& view, const mat4& model, Shader* s = nullptr);
 
     void handleNode(aiNode* ainode, const aiMatrix4x4& accumulatedTransformation = aiMatrix4x4(), int level = 0);
 };
