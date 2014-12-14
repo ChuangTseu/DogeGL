@@ -42,7 +42,9 @@ bool Material::loadFromAssimpMaterial(const aiMaterial *mat, std::string matBase
 
 
     if ( AI_SUCCESS == mat->Get(AI_MATKEY_SHININESS, value) ) {
-        m_specularExponent = value / 4.f;
+        m_specularExponent = (value / 4.f) + 1e-37; //Delta for coutering nan bug when rendering to RGB16F fbo with shininess 0, WHY :D ?
+
+        std::cerr << "Mat: " << m_specularExponent << '\n';
     }
     else {
         m_specularExponent = 1.f;

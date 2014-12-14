@@ -44,7 +44,7 @@ uniform vec3 kd;
 uniform vec3 ks;
 uniform float shininess;
 
-float roughness = 0.2;
+float roughness = 0.5;
 
 //vec3 ka = vec3(1, 1, 1);
 //vec3 kd = vec3(1, 1, 1);
@@ -56,14 +56,9 @@ layout(location = 0) out vec4 fragColor;
 layout(location = 1) out vec4 normalColor;
 layout(location = 2) out vec4 texcoordColor;
 
-float fresnel_schlick(float f0, float LdotH) {
+vec3 fresnel_schlick(vec3 f0, float LdotH) {
     return f0 + (1 - f0) * pow(1 - LdotH, 5);
 }
-
-
-//float fresnel_schlick(float cspec, vec3 l, vec3 h) {
-//    return cspec + (1 - cspec) * (1 - pow(dot(l,h), 5));
-//}
 
 float ggx_dist() {
     return 0;
@@ -121,12 +116,12 @@ vec3 cook_torrance_calc_internal(vec3 lightDir, vec3 lightColor, vec3 normal) {
 
     float D = beckmann_dist(roughness, NdotH);
     float G = g_term(NdotH, NdotV, VdotH);
-    float F = fresnel_schlick(ks, LdotH);
+    vec3 F = fresnel_schlick(ks, LdotH);
 
     float Rs_divider = (4*NdotL*NdotV); //Might be zero, douh
-    float Rs;
+    vec3 Rs;
     if (Rs_divider == 0) //Tmp, find a better solution not involving any 'if'
-        Rs = 0;
+        Rs = vec3(0);
     else
         Rs = (D*F*G) / Rs_divider;
 
@@ -194,9 +189,12 @@ void main( void )
 
 //    finalColor = texture(cubeMapSampler, reflect(normalize(eyePosition - inData.position), normal)).xyz;
 
-    vec3 Cfinal = cook_torrance_calc(dirLight, normal) + cook_torrance_calc(pointLight, normal);// + vec3(0.2, 0, 0);
+//    vec3 Cfinal = cook_torrance_calc(dirLight, normal) + cook_torrance_calc(pointLight, normal);
+    vec3 Cfinal = blinn_phong_calc(dirLight, normal) + blinn_phong_calc(pointLight, normal);
 
     fragColor = vec4(Cfinal, 1.0);
+
+//    fragColor = vec4(shininess);
 
 
     /* DEBUG OUTPUT */

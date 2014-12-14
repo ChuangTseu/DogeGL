@@ -28,14 +28,6 @@ void Scene::initScene() {
     renewableShadersList.push_back(&(tonemapPass.getShader()));
     renewableShadersList.push_back(&(skybox.getShader()));
 
-<<<<<<< HEAD
-//    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-//    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    //SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-=======
->>>>>>> 111fb3830c2d94e7a6d4e3b00153c47323ead3fe
-
 //    quadFboShader.addFragmentShader("quadFbo.frag");
 //    quadFboShader.link();
 
@@ -272,7 +264,7 @@ void Scene::render()
 
     toLuminanceFbo.bind();
 
-    glClear(GL_DEPTH_BUFFER_BIT);
+    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
     fbo->getTexture(0).bindToTarget(GL_TEXTURE0);
     toLuminancePass.resize(closestWidth, closestHeight);
@@ -281,7 +273,7 @@ void Scene::render()
 
     toLuminanceFbo.bindToTarget(GL_TEXTURE0);
 
-    std::cerr << "Closest width x height " << closestWidth << " x " << closestHeight << '\n';
+//    std::cerr << "Closest width x height " << closestWidth << " x " << closestHeight << '\n';
 
 //    exit(0);
 
@@ -338,42 +330,37 @@ void Scene::render()
 
         int numLevels = 1 + floor(log2(std::max(closestWidth, closestHeight)));
 
-//        std::vector<SingleColorFBO> tricheurs;
+        std::vector<SingleColorFBO> tricheurs;
 
-//        tricheurs.reserve(numLevels - 1);
+        tricheurs.reserve(numLevels - 1);
 
-//        while ((m_width >> (n + 1)) > 0 && (m_height >> (n + 1)) > 0) {
-//            tricheurs.emplace_back(m_width >> (n + 1), m_height >> (n + 1), GL_NEAREST);
+        while ((m_width >> (n + 1)) > 0 && (m_height >> (n + 1)) > 0) {
+            tricheurs.emplace_back(m_width >> (n + 1), m_height >> (n + 1), GL_NEAREST);
 
-//            ++n;
-//        }
+            ++n;
+        }
 
-//        timer.glStart();
+        glDisable(GL_DEPTH_TEST);
 
-//        glDisable(GL_DEPTH_TEST);
+        tricheurs[0].bind();
 
-//        tricheurs[0].bind();
+        reducePass.resize(m_width >> (0 + 1), m_height >> (0 + 1));
+        toLuminanceFbo.bindToTarget(GL_TEXTURE0);
 
-//        reducePass.resize(m_width >> (0 + 1), m_height >> (0 + 1));
-//        fbo->getTexture(0).bindToTarget(GL_TEXTURE0);
-
-//        reducePass.fire();
+        reducePass.fire();
 
 
-//        for (int i = 1; i < n; ++i) {
-//            tricheurs[i].bind();
+        for (int i = 1; i < n; ++i) {
+            tricheurs[i].bind();
 
-//            tricheurs[i - 1].bindToTarget(GL_TEXTURE0);
+            tricheurs[i - 1].bindToTarget(GL_TEXTURE0);
 
-//            reducePass.resize(m_width >> (i + 1), m_height >> (i + 1));
+            reducePass.resize(m_width >> (i + 1), m_height >> (i + 1));
 
-//            reducePass.fire();
-//        }
+            reducePass.fire();
+        }
 
-//        timer.glStop();
-//        std::cerr << timer.getElapsedTimeInMilliSec() << " ms.\n";
-
-//        tricheurs[8].bindToTarget(GL_TEXTURE0);
+        tricheurs[8].bindToTarget(GL_TEXTURE0);
 
 //        GLint param;
 //        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &param);
@@ -386,13 +373,12 @@ void Scene::render()
 //        std::cerr << param << '\n';
 
         float onePixel[4] = {0};
-//        glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, onePixel);
+        glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, onePixel);
 
-//        std::cerr << "Mean RGB - " << onePixel[0] << ' ' << onePixel[1] << ' ' << onePixel[2] << '\n';
+        std::cerr << "Mean RGB - " << onePixel[0] << ' ' << onePixel[1] << ' ' << onePixel[2] << ' ' << onePixel[3] << '\n';
 
-//        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_DEPTH_TEST);
 
-//        timer.glStop();
 //        std::cerr << timer.getElapsedTimeInMilliSec() << " ms.\n";
 
 //        tricheurs[7].bindToTarget(GL_TEXTURE0);
@@ -407,39 +393,39 @@ void Scene::render()
 
 //        timer.glStart();
 
-        GLuint m_query;
-        GLuint elapsed_time = 0;
+//        GLuint m_query;
+//        GLuint elapsed_time = 0;
 
-        glGenQueries(1, &m_query);
+//        glGenQueries(1, &m_query);
 
-        glBeginQuery(GL_TIME_ELAPSED, m_query);
+//        glBeginQuery(GL_TIME_ELAPSED, m_query);
 
-        toLuminanceFbo.bindToTarget(GL_TEXTURE0);
+//        toLuminanceFbo.bindToTarget(GL_TEXTURE0);
 
-        glGenerateMipmap(GL_TEXTURE_2D);
+//        glGenerateMipmap(GL_TEXTURE_2D);
 
-        glEndQuery(GL_TIME_ELAPSED);
+//        glEndQuery(GL_TIME_ELAPSED);
 
-        GLint done = 0;
-        while (!done)
-        {
-            glGetQueryObjectiv(m_query, GL_QUERY_RESULT_AVAILABLE, &done);
-        }
-        glGetQueryObjectuiv(m_query, GL_QUERY_RESULT, &elapsed_time);
+//        GLint done = 0;
+//        while (!done)
+//        {
+//            glGetQueryObjectiv(m_query, GL_QUERY_RESULT_AVAILABLE, &done);
+//        }
+//        glGetQueryObjectuiv(m_query, GL_QUERY_RESULT, &elapsed_time);
 
 //        std::cerr << elapsed_time / 1000000.0 << " ms.\n";
 
 //        timer.glStop();
 //        std::cerr << timer.getElapsedTimeInMilliSec() << " ms.\n";
 
-        onePixel[0] = 0;
-        onePixel[1] = 0;
-        onePixel[2] = 0;
-        onePixel[3] = 0;
+//        onePixel[0] = 0;
+//        onePixel[1] = 0;
+//        onePixel[2] = 0;
+//        onePixel[3] = 0;
 
-        glGetTexImage(GL_TEXTURE_2D, numLevels - 1, GL_RGBA, GL_FLOAT, onePixel);
+//        glGetTexImage(GL_TEXTURE_2D, numLevels - 1, GL_RGBA, GL_FLOAT, onePixel);
 
-        std::cerr << "Mean RGB - " << onePixel[0] << ' ' << onePixel[1] << ' ' << onePixel[2] << ' ' << onePixel[3] << '\n';
+//        std::cerr << "Mean RGB - " << onePixel[0] << ' ' << onePixel[1] << ' ' << onePixel[2] << ' ' << onePixel[3] << '\n';
 
 //        timer.glStop();
 //        std::cerr << timer.getElapsedTimeInMilliSec() << " ms.\n";
