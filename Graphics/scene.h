@@ -11,6 +11,7 @@
 #include "skybox.h"
 #include "shadowmap.h"
 #include "screenpass.h"
+#include "envmap.h"
 
 #include "MathsTools/mat4.h"
 #include "MathsTools/vec3.h"
@@ -76,6 +77,8 @@ public:
     Cubemap cubemap;
 
     Skybox skybox;
+
+    EnvMap envmap;
 
     Shadowmap shadowmap{1024, 1024};
 

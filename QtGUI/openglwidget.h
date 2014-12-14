@@ -56,6 +56,8 @@ public slots:
 
     void keyValueChanged(double value);
 
+    void loadEnvironmentMap();
+
 private:
     RendererInterface* m_renderer;
 

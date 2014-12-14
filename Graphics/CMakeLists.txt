@@ -3,6 +3,18 @@ SET(LIBRARY_NAME "GRAPHICS")
 
 FILE(GLOB src *)
 
+find_package(OpenGL REQUIRED) # OpenGL
+
+find_package(GLEW REQUIRED) # GLEW
+
+find_package(assimp REQUIRED) # assimp
+
+find_package(DevIL REQUIRED) # DevIL
+
+include_directories(. ${GLEW_INCLUDE_DIR} ${ASSIMP_INCLUDE_DIR} ${DEVIL_INCLUDE_DIR})
+
+
+
 ADD_LIBRARY(GRAPHICS STATIC ${src})
 
 #target_link_libraries(GRAPHICS ${GLEW_LIBRARY} ${OPENGL_LIBRARIES})

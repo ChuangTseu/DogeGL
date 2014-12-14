@@ -16,6 +16,10 @@ class Image
 
     unsigned int m_bytesPerPixel;
 
+    int m_format;
+    int m_type;
+    int m_numChannels;
+
     ILuint m_imageId;
 
 public:
@@ -35,6 +39,22 @@ public:
 
     unsigned int getBytesPerPixel() const {
         return m_bytesPerPixel;
+    }
+
+    int getNumChannels() const {
+        return m_numChannels;
+    }
+
+    int getGlFormat() const {
+        return m_format;
+    }
+
+    int getGlType() const {
+        return m_type;
+    }
+
+    bool isHdr() const {
+        return (m_type == IL_FLOAT);
     }
 
     const unsigned char* getData() const {

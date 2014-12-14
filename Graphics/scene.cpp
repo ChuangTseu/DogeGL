@@ -81,6 +81,15 @@ void Scene::initScene() {
 
     skybox.feedCubemap(cubemap);
 
+    envmap.loadFromFile("grace_probe.hdr");
+//    envmap.loadFromFile("grace_probe.tif");
+//    envmap.loadFromFile("uffizi-large.exr");
+//    envmap.loadFromFile("uffizi-large.hdr");
+//    envmap.loadFromFile("grace_cross.tif");
+//    envmap.loadFromFile("grace_cross.hdr");
+
+
+
     fbo.reset(new FBO(m_width, m_height, 3));
 }
 
@@ -154,7 +163,8 @@ void Scene::render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-    skybox.render(projection, camera.getPureViewNoTranslation());
+//    skybox.render(projection, camera.getPureViewNoTranslation());
+    envmap.render(projection, camera.getPureViewNoTranslation());
 //        skybox.render(projection, camera.getView());
 
     FBO::unbind();
@@ -375,7 +385,7 @@ void Scene::render()
         float onePixel[4] = {0};
         glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, onePixel);
 
-        std::cerr << "Mean RGB - " << onePixel[0] << ' ' << onePixel[1] << ' ' << onePixel[2] << ' ' << onePixel[3] << '\n';
+//        std::cerr << "Mean RGB - " << onePixel[0] << ' ' << onePixel[1] << ' ' << onePixel[2] << ' ' << onePixel[3] << '\n';
 
         glEnable(GL_DEPTH_TEST);
 

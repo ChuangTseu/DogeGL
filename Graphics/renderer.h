@@ -12,17 +12,18 @@ class Renderer : public RendererInterface
 public:
     Renderer(int width, int height);
 
-    virtual void initializeGL(void);
-    virtual void resizeGL(int width, int height);
-    virtual void paintGL(void);
+    void initializeGL(void);
+    void resizeGL(int width, int height);
+    void paintGL(void);
 
-    virtual void loadModel(const std::string &filename);
+    void loadModel(const std::string &filename);
+    void loadEnvironmentMap(const std::string& filename);
 
-    virtual void onKeyPress(int qt_key);
+    void onKeyPress(int qt_key);
 
-    virtual void reloadShader();
-    virtual void toggleWireframe();
-    virtual void setFinalFboTarget(int targetIndex);
+    void reloadShader();
+    void toggleWireframe();
+    void setFinalFboTarget(int targetIndex);
 
     bool initGL();
     void initScene();

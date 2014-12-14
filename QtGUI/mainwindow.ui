@@ -212,8 +212,15 @@
     <addaction name="actionTexcoord"/>
     <addaction name="actionDepth"/>
    </widget>
+   <widget class="QMenu" name="menuEnvironment">
+    <property name="title">
+     <string>Environment</string>
+    </property>
+    <addaction name="actionEnvmapLoad"/>
+   </widget>
    <addaction name="menuModel"/>
    <addaction name="menuShader"/>
+   <addaction name="menuEnvironment"/>
    <addaction name="menuOptions"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -291,6 +298,11 @@
     <string>Ctrl+0</string>
    </property>
   </action>
+  <action name="actionEnvmapLoad">
+   <property name="text">
+    <string>Load...</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -302,6 +314,7 @@
    <slots>
     <slot>gammaChanged(float)</slot>
     <slot>keyValueChanged(double)</slot>
+    <slot>loadEnvironmentMap()</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -472,6 +485,22 @@
     </hint>
     <hint type="destinationlabel">
      <x>239</x>
+     <y>280</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionEnvmapLoad</sender>
+   <signal>triggered()</signal>
+   <receiver>displayArea</receiver>
+   <slot>loadEnvironmentMap()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>259</x>
      <y>280</y>
     </hint>
    </hints>

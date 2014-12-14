@@ -54,6 +54,11 @@ void Renderer::loadModel(const std::string &filename)
     m_scene->mainModel.loadFromFile(filename);
 }
 
+void Renderer::loadEnvironmentMap(const std::string &filename)
+{
+    m_scene->envmap.loadFromFile(filename);
+}
+
 void Renderer::onKeyPress(int qt_key)
 {
     vec3 kright = normalize(cross(m_scene->forward, m_scene->up));
@@ -72,10 +77,10 @@ void Renderer::onKeyPress(int qt_key)
         m_scene->position -= kright*0.1f;        }
     if (qt_key == Qt::Key_D /*D*/) {
         m_scene->position += kright*0.1f;        }
-    if (qt_key == Qt::Key_Shift /*SHIFT*/) {
-        m_scene->position += m_scene->up*0.1f;        }
-    if (qt_key == Qt::Key_Control /*CTRL*/) {
-        m_scene->position -= m_scene->up*0.1f;        }
+//    if (qt_key == Qt::Key_Shift /*SHIFT*/) {
+//        m_scene->position += m_scene->up*0.1f;        }
+//    if (qt_key == Qt::Key_Control /*CTRL*/) {
+//        m_scene->position -= m_scene->up*0.1f;        }
 
     if (qt_key == Qt::Key_Plus) {
         m_scene->userDisplacementFactor += 0.005f;

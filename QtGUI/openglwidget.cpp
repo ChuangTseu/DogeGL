@@ -108,11 +108,10 @@ void OpenGLWidget::keyPressEvent(QKeyEvent* event)
 
 void OpenGLWidget::loadModel()
 {
-    std::cerr << "Loading model... \n";
-
     QString filename = QFileDialog::getOpenFileName();
 
-    m_renderer->loadModel(filename.toStdString());
+    if (filename != "")
+        m_renderer->loadModel(filename.toStdString());
 }
 
 void OpenGLWidget::reloadShader()
@@ -138,4 +137,12 @@ void OpenGLWidget::gammaChanged(float value)
 void OpenGLWidget::keyValueChanged(double value)
 {
     m_renderer->keyValueChanged(value);
+}
+
+void OpenGLWidget::loadEnvironmentMap()
+{
+    QString filename = QFileDialog::getOpenFileName();
+
+    if (filename != "")
+        m_renderer->loadEnvironmentMap(filename.toStdString());
 }

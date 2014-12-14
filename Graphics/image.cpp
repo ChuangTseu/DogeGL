@@ -39,6 +39,11 @@ bool Image::loadFromFile(std::string filename, bool reversed)
     m_height = ilGetInteger(IL_IMAGE_HEIGHT);
 
     m_bytesPerPixel = ilGetInteger(IL_IMAGE_BYTES_PER_PIXEL);
+    m_format = ilGetInteger(IL_IMAGE_FORMAT);
+    m_type = ilGetInteger(IL_IMAGE_TYPE);
+
+//    int m_bitsPerPixel = ilGetInteger(IL_IMAGE_BITS_PER_PIXEL);
+    m_numChannels = ilGetInteger(IL_IMAGE_CHANNELS);
 
     return true;
 }

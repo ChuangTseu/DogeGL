@@ -33,6 +33,8 @@ public:
     virtual void gammaChanged(float value) = 0;
 
     virtual void keyValueChanged(float value) = 0;
+
+    virtual void loadEnvironmentMap(const std::string& filename) = 0;
 };
 
 #endif // RENDERERINTERFACE_H
