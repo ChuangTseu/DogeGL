@@ -85,14 +85,14 @@ void EnvMap::render(const mat4 &projection, const mat4 &pureView) {
     glDepthMask(GL_TRUE);
 }
 
-int EnvMap::channelToRgbFormat(int numChannels) const {
+int EnvMap::channelToRgbFormatHDR(int numChannels) const {
     switch(numChannels) {
     case 1:
         return GL_RED;
     case 3:
-        return GL_RGB;
+        return GL_RGB16F;
     case 4:
-        return GL_RGBA;
+        return GL_RGBA16F;
     default:
         std::cerr << "Channel number " << numChannels << " not handled. Return -1" << '\n';
         return -1;
@@ -121,7 +121,7 @@ bool EnvMap::loadAsSpherical(Image &image) {
 
     if (image.isHdr()) {
         std::cerr << "HDR!\n";
-        internalFormat = channelToRgbFormat(image.getNumChannels());
+        internalFormat = channelToRgbFormatHDR(image.getNumChannels());
     }
     else {
         internalFormat = channelToSRgbFormat(image.getNumChannels());

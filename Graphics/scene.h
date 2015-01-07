@@ -80,6 +80,9 @@ public:
 
     EnvMap envmap;
 
+    NewTexture hdrTex;
+    Image hdrIm;
+
     Shadowmap shadowmap{1024, 1024};
 
     float theta = 0;

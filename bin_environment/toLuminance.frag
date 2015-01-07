@@ -23,13 +23,22 @@ const mat3 RGBtoXYZ = mat3(
     0.1805, 0.0722, 0.9505
 );
 
+float luminance(vec3 color) {
+    return color.r * 0.2126 + color.g * 0.7152 + color.b * 0.0722;
+}
+
 void main( void )
 {
     vec2 screenTexCoord = vec2(gl_FragCoord.x/screenWidth, gl_FragCoord.y/screenHeight);
 
-    vec3 xyzColor = RGBtoXYZ * texture(texSampler, screenTexCoord).xyz;
+    vec3 rgbColor = texture(texSampler, screenTexCoord).rgb;
+
+//    vec3 xyzColor = RGBtoXYZ * texture(texSampler, screenTexCoord).xyz;
 
 //    xyzColor.y;
+    float Y = luminance(rgbColor);
 
-    fragColor = vec4(xyzColor, log(xyzColor.y + 1e-6));
+    fragColor = vec4(vec3(0, 0, Y), log(max(Y, 1e-37)));
+
+//    fragColor = vec4(texture(texSampler, screenTexCoord).rgb, log(Y + 1e-6));
 }

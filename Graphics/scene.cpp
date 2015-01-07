@@ -88,7 +88,9 @@ void Scene::initScene() {
 //    envmap.loadFromFile("grace_cross.tif");
 //    envmap.loadFromFile("grace_cross.hdr");
 
-
+    hdrTex.loadFromFile("CandleGlass.exr");
+    hdrIm.loadFromFile("CandleGlass.exr");
+//    hdrTex.loadFromFile("Habib_House_Med.dds");
 
     fbo.reset(new FBO(m_width, m_height, 3));
 }
@@ -125,8 +127,6 @@ static bool isPowerOfTwo(int val) {
 
 void Scene::render()
 {
-    //Bed
-
     theta += 0.01f;
     //        A += 0.03;
 
@@ -135,7 +135,6 @@ void Scene::render()
 
     //position = {A*x, 5.f*sin(theta*3.f), A*z};
 
-
     forward.normalize();
 
     camera.lookAt(position, position + forward, up);
@@ -143,12 +142,10 @@ void Scene::render()
     /* AT LAST: DA RENDERING */
 
 
-    /* Do your model transformations */
     mat4 cubeTransformation = mat4::Identity();
 //        cubeTransformation.translate(5,0,0);
 //        cubeTransformation.rotate(normalize({0.f, 0.f, 1.f}), -90.f);
 
-    /* Get your lights ready */
     DirLight dirLight{vec3{2, 2, 2}, vec3{0, -1, -1}};
     PointLight pointLight{vec3{0, 1, 0}, vec3{x*10, 0, z*10}};
 
@@ -165,20 +162,17 @@ void Scene::render()
 
 //    skybox.render(projection, camera.getPureViewNoTranslation());
     envmap.render(projection, camera.getPureViewNoTranslation());
-//        skybox.render(projection, camera.getView());
 
     FBO::unbind();
 
 
-    /* Bind a shader */
     s.use();
 
-    /* Send data to the shader */
     glUniform1i(glGetUniformLocation(s.getProgramId(), "texSampler"), 0); //Texture unit 0 is for base images.
     glUniform1i(glGetUniformLocation(s.getProgramId(), "normalMapSampler"), 1);
     glUniform1i(glGetUniformLocation(s.getProgramId(), "dispMapSampler"), 2); //...
     glUniform1i(glGetUniformLocation(s.getProgramId(), "shadowMapSampler"), 3);
-//        texture.bindToTarget(GL_TEXTURE0);
+
     dogeMap.bindToTarget(GL_TEXTURE2);
 
     glUniform1i(glGetUniformLocation(s.getProgramId(), "cubeMapSampler"), 0);
@@ -245,10 +239,6 @@ void Scene::render()
 
     Shader::unbind();
 
-    /* And so on for every other model... */
-    /* Currently handmade, for developing/testing purposes */
-    /* Will hopefully become moar professional in the near future */
-
 
     base.draw(projection, camera.getView());
 
@@ -260,6 +250,9 @@ void Scene::render()
 
     unsigned int closestWidth = m_width;
     unsigned int closestHeight = m_height;
+
+//    closestWidth = hdrTex.width();
+//    closestHeight = hdrTex.height();
 
     if (!isPowerOfTwo(closestWidth)) {
         float f = (float)(closestWidth - 1);
@@ -277,21 +270,14 @@ void Scene::render()
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
     fbo->getTexture(0).bindToTarget(GL_TEXTURE0);
+//    hdrTex.bindToTarget(GL_TEXTURE0);
     toLuminancePass.resize(closestWidth, closestHeight);
 
     toLuminancePass.fire();
 
-    toLuminanceFbo.bindToTarget(GL_TEXTURE0);
-
 //    std::cerr << "Closest width x height " << closestWidth << " x " << closestHeight << '\n';
 
-//    exit(0);
-
-
-    //First try -> do reduce only on power of two textures, should be easy mode
     if (true /*(m_width == m_height) && isPowerOfTwo(m_width)*/) {
-//        Timer timer;
-
         toLuminanceFbo.bindToTarget(GL_TEXTURE0);
 
 //        GLint param;
@@ -304,9 +290,7 @@ void Scene::render()
 //        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_PACK_ALIGNMENT, &param);
 //        std::cerr << param << '\n';
 
-////        timer.glStart();
-
-//        float* fPixel = new float[m_height*m_width*4];
+//        float* fPixel = new float[closestWidth*closestHeight*4];
 
 //        glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, fPixel);
 
@@ -329,79 +313,73 @@ void Scene::render()
 //        mean_z /= (float) closestWidth*closestHeight;
 //        logAverageLum /= (float) closestWidth*closestHeight;
 
-//        std::cerr << "Mean RGB = " << mean_x << ' ' << mean_y << ' ' << mean_z << ' ' <<  logAverageLum << '\n';
+//        std::cerr << "Mean RGB = " << mean_x << ' ' << mean_y << ' ' << mean_z << ' ' <<  logAverageLum
+//                  << " over " << closestWidth*closestHeight << " pixels" << '\n';
 
 //        delete fPixel;
 
-//        timer.glStop();
-//        std::cerr << timer.getElapsedTimeInMilliSec() << " ms.\n";
+//        fPixel = (float*) hdrIm.getData();
 
-        int n = 0;
+//        for (int i = 0; i < closestHeight; ++i) {
+//            for (int j = 0; j < closestWidth; ++j) {
+//                mean_x += fPixel[i*closestWidth*4 + j*4 + 0];
+//                mean_y += fPixel[i*closestWidth*4 + j*4 + 1];
+//                mean_z += fPixel[i*closestWidth*4 + j*4 + 2];
+//                logAverageLum += fPixel[i*closestWidth*4 + j*4 + 3];
+//            }
+//        }
+
+//        mean_x /= (float) closestWidth*closestHeight;
+//        mean_y /= (float) closestWidth*closestHeight;
+//        mean_z /= (float) closestWidth*closestHeight;
+//        logAverageLum /= (float) closestWidth*closestHeight;
+
+//        std::cerr << "Mean RGB = " << mean_x << ' ' << mean_y << ' ' << mean_z << ' ' <<  logAverageLum
+//                  << " over " << closestWidth*closestHeight << " pixels" << '\n';
 
         int numLevels = 1 + floor(log2(std::max(closestWidth, closestHeight)));
 
-        std::vector<SingleColorFBO> tricheurs;
-
-        tricheurs.reserve(numLevels - 1);
-
-        while ((m_width >> (n + 1)) > 0 && (m_height >> (n + 1)) > 0) {
-            tricheurs.emplace_back(m_width >> (n + 1), m_height >> (n + 1), GL_NEAREST);
-
-            ++n;
-        }
-
-        glDisable(GL_DEPTH_TEST);
-
-        tricheurs[0].bind();
-
-        reducePass.resize(m_width >> (0 + 1), m_height >> (0 + 1));
-        toLuminanceFbo.bindToTarget(GL_TEXTURE0);
-
-        reducePass.fire();
-
-
-        for (int i = 1; i < n; ++i) {
-            tricheurs[i].bind();
-
-            tricheurs[i - 1].bindToTarget(GL_TEXTURE0);
-
-            reducePass.resize(m_width >> (i + 1), m_height >> (i + 1));
-
-            reducePass.fire();
-        }
-
-        tricheurs[8].bindToTarget(GL_TEXTURE0);
-
-//        GLint param;
-//        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &param);
-//        std::cerr << param << '\n';
-//        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &param);
-//        std::cerr << param << '\n';
-//        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &param);
-//        std::cerr << param << '\n';
-//        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_PACK_ALIGNMENT, &param);
-//        std::cerr << param << '\n';
-
         float onePixel[4] = {0};
-        glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, onePixel);
+
+//        int n = 0;
+
+//        std::vector<SingleColorFBO> tricheurs;
+
+//        tricheurs.reserve(numLevels - 1);
+
+//        while ((m_width >> (n + 1)) > 0 && (m_height >> (n + 1)) > 0) {
+//            tricheurs.emplace_back(m_width >> (n + 1), m_height >> (n + 1), GL_NEAREST);
+
+//            ++n;
+//        }
+
+//        glDisable(GL_DEPTH_TEST);
+
+//        tricheurs[0].bind();
+
+//        reducePass.resize(m_width >> (0 + 1), m_height >> (0 + 1));
+//        toLuminanceFbo.bindToTarget(GL_TEXTURE0);
+
+//        reducePass.fire();
+
+
+//        for (int i = 1; i < n; ++i) {
+//            tricheurs[i].bind();
+
+//            tricheurs[i - 1].bindToTarget(GL_TEXTURE0);
+
+//            reducePass.resize(m_width >> (i + 1), m_height >> (i + 1));
+
+//            reducePass.fire();
+//        }
+
+//        tricheurs[8].bindToTarget(GL_TEXTURE0);
+
+//        glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, onePixel);
 
 //        std::cerr << "Mean RGB - " << onePixel[0] << ' ' << onePixel[1] << ' ' << onePixel[2] << ' ' << onePixel[3] << '\n';
 
-        glEnable(GL_DEPTH_TEST);
-
-//        std::cerr << timer.getElapsedTimeInMilliSec() << " ms.\n";
-
-//        tricheurs[7].bindToTarget(GL_TEXTURE0);
-
-//        float fourPixel[4][4] = {0};
-//        glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, fourPixel);
-
-//        std::cerr << "           " << fourPixel[0][0] << ' ' << fourPixel[0][1] << ' ' << fourPixel[0][2] << '\t';
-//        std::cerr << "           " << fourPixel[1][0] << ' ' << fourPixel[1][1] << ' ' << fourPixel[1][2] << '\n';
-//        std::cerr << "           " << fourPixel[2][0] << ' ' << fourPixel[2][1] << ' ' << fourPixel[2][2] << '\t';
-//        std::cerr << "           " << fourPixel[3][0] << ' ' << fourPixel[3][1] << ' ' << fourPixel[3][2] << '\n';
-
-//        timer.glStart();
+//        glEnable(GL_DEPTH_TEST);
 
 //        GLuint m_query;
 //        GLuint elapsed_time = 0;
@@ -410,9 +388,9 @@ void Scene::render()
 
 //        glBeginQuery(GL_TIME_ELAPSED, m_query);
 
-//        toLuminanceFbo.bindToTarget(GL_TEXTURE0);
+        toLuminanceFbo.bindToTarget(GL_TEXTURE0);
 
-//        glGenerateMipmap(GL_TEXTURE_2D);
+        glGenerateMipmap(GL_TEXTURE_2D);
 
 //        glEndQuery(GL_TIME_ELAPSED);
 
@@ -425,33 +403,34 @@ void Scene::render()
 
 //        std::cerr << elapsed_time / 1000000.0 << " ms.\n";
 
-//        timer.glStop();
-//        std::cerr << timer.getElapsedTimeInMilliSec() << " ms.\n";
+        onePixel[0] = 0;
+        onePixel[1] = 0;
+        onePixel[2] = 0;
+        onePixel[3] = 0;
 
-//        onePixel[0] = 0;
-//        onePixel[1] = 0;
-//        onePixel[2] = 0;
-//        onePixel[3] = 0;
+        glGetTexImage(GL_TEXTURE_2D, numLevels - 1, GL_RGBA, GL_FLOAT, onePixel);
 
-//        glGetTexImage(GL_TEXTURE_2D, numLevels - 1, GL_RGBA, GL_FLOAT, onePixel);
-
-//        std::cerr << "Mean RGB - " << onePixel[0] << ' ' << onePixel[1] << ' ' << onePixel[2] << ' ' << onePixel[3] << '\n';
-
-//        timer.glStop();
-//        std::cerr << timer.getElapsedTimeInMilliSec() << " ms.\n";
-
-//        exit(0);
+        std::cerr << "Mean RGB - " << onePixel[0] << ' ' << onePixel[1] << ' ' << onePixel[2] << ' ' << onePixel[3] << '\n';
 
         FBO::unbind();
 
 //        tricheurs[0].bindToTarget(GL_TEXTURE0);
         fbo->getTexture(fboTexId).bindToTarget(GL_TEXTURE0);
+//        hdrTex.bindToTarget(GL_TEXTURE0);
 //        toLuminanceFbo.bindToTarget(GL_TEXTURE0);
 
         Shader& tonemapShader = tonemapPass.getShader();
         tonemapShader.use();
 
-        glUniform1f(glGetUniformLocation(tonemapShader.getProgramId(), "logAvLum"), onePixel[3]);
+//        tonemapPass.resize(closestWidth, closestHeight);
+
+        float avLum = exp(onePixel[3]);
+
+        std::cerr << "avLum : " << avLum << '\n';
+        std::cerr << "gamma : " << gamma << '\n';
+        std::cerr << "keyValue : " << keyValue << '\n';
+
+        glUniform1f(glGetUniformLocation(tonemapShader.getProgramId(), "avLum"), avLum);
         glUniform1f(glGetUniformLocation(tonemapShader.getProgramId(), "gamma"), gamma);
         glUniform1f(glGetUniformLocation(tonemapShader.getProgramId(), "keyValue"), keyValue);
         tonemapPass.fire();

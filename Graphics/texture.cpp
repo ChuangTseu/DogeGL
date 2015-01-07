@@ -107,3 +107,23 @@ bool Texture::loadFromMaterialColor(Color3f matColor) {
 
     return true;
 }
+
+
+int NewTexture::width() const
+{
+    return m_width;
+}
+
+void NewTexture::setWidth(int width)
+{
+    m_width = width;
+}
+int NewTexture::height() const
+{
+    return m_height;
+}
+
+void NewTexture::setHeight(int height)
+{
+    m_height = height;
+}

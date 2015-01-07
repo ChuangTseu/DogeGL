@@ -39,7 +39,7 @@ public:
     void render(const mat4& projection, const mat4& pureView);
 
 private:
-    int channelToRgbFormat(int numChannels) const;
+    int channelToRgbFormatHDR(int numChannels) const;
 
     int channelToSRgbFormat(int numChannels) const;
 
