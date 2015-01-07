@@ -44,6 +44,8 @@ public:
     ScreenPass finalScreenPass;
     ScreenPass toLuminancePass;
     ScreenPass tonemapPass;
+    ScreenPass brightPass;
+    ScreenPass bloomPass;
 
     std::vector<Shader*> renewableShadersList;
 

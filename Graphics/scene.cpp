@@ -8,7 +8,9 @@ Scene::Scene(int width, int height) :
     reducePass(m_width, m_height, "reduce.frag"),
     finalScreenPass(m_width, m_height, "quadFbo.frag"),
     toLuminancePass(m_width, m_height, "toLuminance.frag"),
-    tonemapPass(m_width, m_height, "tonemap.frag")
+    tonemapPass(m_width, m_height, "tonemap.frag"),
+    brightPass(m_width, m_height, "brightpass.frag"),
+    bloomPass(m_width, m_height, "bloompass.frag")
 {
 }
 
@@ -27,6 +29,8 @@ void Scene::initScene() {
     renewableShadersList.push_back(&(toLuminancePass.getShader()));
     renewableShadersList.push_back(&(tonemapPass.getShader()));
     renewableShadersList.push_back(&(skybox.getShader()));
+    renewableShadersList.push_back(&(brightPass.getShader()));
+    renewableShadersList.push_back(&(bloomPass.getShader()));
 
 //    quadFboShader.addFragmentShader("quadFbo.frag");
 //    quadFboShader.link();
@@ -109,6 +113,10 @@ void Scene::resize(int width, int height)
     toLuminancePass.resize(width, height);
 
     tonemapPass.resize(width, height);
+
+    brightPass.resize(width, height);
+
+    bloomPass.resize(width, height);
 
     std::cerr << "FBO shall be: " << width << " " << height << '\n';
 }
@@ -277,7 +285,7 @@ void Scene::render()
 
 //    std::cerr << "Closest width x height " << closestWidth << " x " << closestHeight << '\n';
 
-    if (true /*(m_width == m_height) && isPowerOfTwo(m_width)*/) {
+    if (true) {
         toLuminanceFbo.bindToTarget(GL_TEXTURE0);
 
 //        GLint param;
@@ -410,9 +418,15 @@ void Scene::render()
 
         glGetTexImage(GL_TEXTURE_2D, numLevels - 1, GL_RGBA, GL_FLOAT, onePixel);
 
-        std::cerr << "Mean RGB - " << onePixel[0] << ' ' << onePixel[1] << ' ' << onePixel[2] << ' ' << onePixel[3] << '\n';
+//        std::cerr << "Mean RGB - " << onePixel[0] << ' ' << onePixel[1] << ' ' << onePixel[2] << ' ' << onePixel[3] << '\n';
 
         FBO::unbind();
+
+        SingleColorFBO tonemappedFbo(m_width, m_height);
+        SingleColorFBO brightPassFbo_downsampled(m_width / 8, m_height / 8);
+        brightPass.resize(m_width / 8, m_height / 8);
+
+        tonemappedFbo.bind();
 
 //        tricheurs[0].bindToTarget(GL_TEXTURE0);
         fbo->getTexture(fboTexId).bindToTarget(GL_TEXTURE0);
@@ -426,16 +440,32 @@ void Scene::render()
 
         float avLum = exp(onePixel[3]);
 
-        std::cerr << "avLum : " << avLum << '\n';
-        std::cerr << "gamma : " << gamma << '\n';
-        std::cerr << "keyValue : " << keyValue << '\n';
+//        std::cerr << "avLum : " << avLum << '\n';
+//        std::cerr << "gamma : " << gamma << '\n';
+//        std::cerr << "keyValue : " << keyValue << '\n';
 
         glUniform1f(glGetUniformLocation(tonemapShader.getProgramId(), "avLum"), avLum);
         glUniform1f(glGetUniformLocation(tonemapShader.getProgramId(), "gamma"), gamma);
         glUniform1f(glGetUniformLocation(tonemapShader.getProgramId(), "keyValue"), keyValue);
         tonemapPass.fire();
 
+        tonemappedFbo.bindToTarget(GL_TEXTURE0);
+
+        brightPassFbo_downsampled.bind();
+        brightPass.fire();
+
+
+        brightPassFbo_downsampled.bindToTarget(GL_TEXTURE1);
+        FBO::unbind();
+
+        Shader& bloomShader = bloomPass.getShader();
+        bloomShader.use();
+        glUniform1i(glGetUniformLocation(bloomShader.getProgramId(), "texSampler"), 0);
+        glUniform1i(glGetUniformLocation(bloomShader.getProgramId(), "brightSampler"), 1);
+
+        bloomPass.fire();
 //        finalScreenPass.fire();
+
     }
     else {
         FBO::unbind();
